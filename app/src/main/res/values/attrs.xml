@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ToggleSwitch">
+        <attr name="isOn" format="boolean" />
+        <attr name="thumbColor" format="color" />
+        <attr name="trackOnColor" format="color" />
+        <attr name="trackOffColor" format="color" />
+        <attr name="toggleSize" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="small" value="1" />
+        </attr>
+    </declare-styleable>
+</resources>

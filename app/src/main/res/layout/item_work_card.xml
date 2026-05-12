@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    작업 카드 (내역/예약 공통) - 간결 버전
+    표시: 작업명 + 시간 + 상태뱃지
+    제거: 구역 중복 표시, 장치명 별도 행 (작업명에 포함)
+-->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/forest_mid">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
+
+        <!-- 좌측 컬러 바 (DeviceType 색상) -->
+        <View
+            android:id="@+id/card_color_bar"
+            android:layout_width="4dp"
+            android:layout_height="36dp"
+            android:background="@color/active_green"
+            android:layout_marginEnd="12dp" />
+
+        <!-- 중앙 정보 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- 작업명 -->
+            <TextView
+                android:id="@+id/card_task_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="관개 작업"
+                android:textColor="@color/white"
+                android:textSize="19sp"
+                android:textStyle="bold" />
+
+            <!-- 시간 범위 -->
+            <TextView
+                android:id="@+id/card_time_zone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="06:00 ~ 07:30"
+                android:textColor="@color/mist"
+                android:textSize="19sp"
+                android:layout_marginTop="3dp" />
+
+            <!-- 장치명 (숨김 - 필요 시 VISIBLE) -->
+            <TextView
+                android:id="@+id/card_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="관개 펌프"
+                android:textColor="@color/sage"
+                android:textSize="20sp"
+                android:layout_marginTop="2dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- 상태 뱃지 -->
+        <TextView
+            android:id="@+id/card_status_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="완료"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/active_green"
+            android:background="@drawable/bg_acacia_tag"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

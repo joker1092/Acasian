@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_white_card">
+
+    <!-- 헤더 -->
+    <LinearLayout
+        android:id="@+id/equipWarnHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="18dp">
+
+        <!-- 경고 아이콘 뱃지 -->
+        <TextView
+            android:id="@+id/tvWarnIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="⚠"
+            android:textSize="20sp"
+            android:background="@drawable/bg_badge_warn"
+            android:layout_marginEnd="12dp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvWarnTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="관수 시작 전 확인"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"/>
+            <TextView
+                android:id="@+id/tvWarnLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="주의"
+                android:textSize="12sp"
+                android:textColor="@color/device_accent_error"
+                android:layout_marginTop="2dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"/>
+
+    <!-- 경고 내용 목록 -->
+    <LinearLayout
+        android:id="@+id/warnMessageContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="6dp"/>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginTop="8dp"/>
+
+    <!-- 버튼 행 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:gravity="end">
+
+        <!-- 취소 버튼 -->
+        <TextView
+            android:id="@+id/btnWarnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:gravity="center"
+            android:text="취소"
+            android:textSize="15sp"
+            android:textColor="@color/text_hint"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        <!-- 계속 버튼 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/btnWarnContinue"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/morning">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="계속 진행"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="@color/forest_dark"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"/>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>

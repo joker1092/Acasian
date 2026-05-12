@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- 핸들 -->
+    <View
+        android:layout_width="40dp" android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp" android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_bottom_sheet_handle" />
+
+    <!-- ══ 헤더 ══ -->
+    <LinearLayout
+        android:id="@+id/bsHeader"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:paddingStart="8dp" android:paddingEnd="20dp"
+        android:paddingTop="8dp" android:paddingBottom="8dp">
+
+        <!-- 뒤로 버튼 (추가 폼에서만 표시) -->
+        <TextView
+            android:id="@+id/bsBtnBack"
+            android:layout_width="44dp" android:layout_height="44dp"
+            android:gravity="center" android:text="←"
+            android:textSize="20sp" android:textColor="@color/text_primary"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true" android:focusable="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/bsTitle"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:layout_marginStart="8dp"
+            android:text="관수 유형 선택"
+            android:textSize="18sp" android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/bsZoneName"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="14sp" android:textColor="@color/forest_dark"
+            android:background="@drawable/bg_badge_ok"
+            android:paddingStart="12dp" android:paddingEnd="12dp"
+            android:paddingTop="4dp" android:paddingBottom="4dp" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/divider" />
+
+    <!-- ══ 패널 A: 유형 목록 ══ -->
+    <LinearLayout
+        android:id="@+id/bsPanelList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:overScrollMode="ifContentScrolls">
+            <LinearLayout
+                android:id="@+id/bsCardContainer"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="16dp" android:paddingEnd="16dp"
+                android:paddingTop="12dp" android:paddingBottom="4dp" />
+        </androidx.core.widget.NestedScrollView>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="@color/divider" android:layout_marginTop="4dp" />
+
+        <!-- + 새 유형 추가 버튼 -->
+        <TextView
+            android:id="@+id/bsBtnAddType"
+            android:layout_width="match_parent" android:layout_height="48dp"
+            android:gravity="center" android:text="+ 새 관수 유형 추가"
+            android:textSize="16sp" android:textStyle="bold" android:textColor="@color/moss"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true" android:focusable="true" />
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp" android:paddingEnd="16dp"
+            android:paddingTop="12dp" android:paddingBottom="24dp">
+            <Button
+                android:id="@+id/bsBtnCancel"
+                android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:text="취소"
+                android:textSize="16sp" android:textColor="@color/text_hint"
+                android:background="@drawable/bg_irrigation_card"
+                android:layout_marginEnd="8dp" />
+            <Button
+                android:id="@+id/bsBtnConfirm"
+                android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="2" android:text="선택 완료"
+                android:textSize="17sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_login_button" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ══ 패널 B: 새 유형 추가 폼 ══ -->
+    <LinearLayout
+        android:id="@+id/bsPanelForm"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:overScrollMode="ifContentScrolls"
+            android:fillViewport="false">
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="20dp" android:paddingEnd="20dp"
+                android:paddingTop="8dp" android:paddingBottom="8dp">
+
+                <!-- 유형 이름 -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="유형 이름" android:textSize="15sp"
+                    android:textColor="@color/text_hint" android:layout_marginBottom="4dp" />
+                <EditText android:id="@+id/bsFormName"
+                    android:layout_width="match_parent" android:layout_height="52dp"
+                    android:hint="예: 봄 아침 관수" android:textSize="16sp"
+                    android:textColor="@color/text_primary" android:textColorHint="@color/text_hint"
+                    android:background="@drawable/bg_input_normal"
+                    android:paddingStart="14dp" android:paddingEnd="14dp"
+                    android:inputType="text" android:singleLine="true"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- 가동 시간 / 반복 횟수 -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="14dp">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical"
+                        android:layout_marginEnd="8dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="가동 시간 (분)" android:textSize="15sp"
+                            android:textColor="@color/text_hint" android:layout_marginBottom="4dp" />
+                        <EditText android:id="@+id/bsFormRun"
+                            android:layout_width="match_parent" android:layout_height="52dp"
+                            android:text="30" android:textSize="20sp" android:textStyle="bold"
+                            android:textColor="@color/text_primary" android:gravity="center"
+                            android:background="@drawable/bg_input_normal"
+                            android:paddingStart="12dp" android:paddingEnd="12dp"
+                            android:inputType="number" android:singleLine="true" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="반복 횟수" android:textSize="15sp"
+                            android:textColor="@color/text_hint" android:layout_marginBottom="4dp" />
+                        <EditText android:id="@+id/bsFormRepeat"
+                            android:layout_width="match_parent" android:layout_height="52dp"
+                            android:text="1" android:textSize="20sp" android:textStyle="bold"
+                            android:textColor="@color/text_primary" android:gravity="center"
+                            android:background="@drawable/bg_input_normal"
+                            android:paddingStart="12dp" android:paddingEnd="12dp"
+                            android:inputType="number" android:singleLine="true" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 휴지 시간 -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="휴지 시간 (분)" android:textSize="15sp"
+                    android:textColor="@color/text_hint" android:layout_marginBottom="4dp" />
+                <EditText android:id="@+id/bsFormRest"
+                    android:layout_width="match_parent" android:layout_height="52dp"
+                    android:text="0" android:textSize="20sp" android:textStyle="bold"
+                    android:textColor="@color/text_primary" android:gravity="center"
+                    android:background="@drawable/bg_input_normal"
+                    android:paddingStart="12dp" android:paddingEnd="12dp"
+                    android:inputType="number" android:singleLine="true"
+                    android:layout_marginBottom="14dp" />
+
+                <!-- 그룹 구성 — 밸브를 그룹으로 묶어 순서 지정 -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="밸브 그룹 구성" android:textSize="15sp"
+                    android:textColor="@color/text_hint" android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:id="@+id/bsFormGroupContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="4dp"/>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <View android:layout_width="match_parent" android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <!-- 저장 버튼 -->
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="16dp" android:paddingEnd="16dp"
+            android:paddingTop="12dp" android:paddingBottom="24dp">
+            <Button
+                android:id="@+id/bsFormBtnCancel"
+                android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="1" android:text="취소"
+                android:textSize="16sp" android:textColor="@color/text_hint"
+                android:background="@drawable/bg_irrigation_card"
+                android:layout_marginEnd="8dp" />
+            <Button
+                android:id="@+id/bsFormBtnSave"
+                android:layout_width="0dp" android:layout_height="56dp"
+                android:layout_weight="2" android:text="저장 후 선택"
+                android:textSize="17sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_login_button" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

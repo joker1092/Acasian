@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    변경 내역:
+    - android:padding="4dp" → ?attr/cal_cell_padding_h
+-->
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:columnCount="7"
+    android:padding="?attr/cal_cell_padding_h" />

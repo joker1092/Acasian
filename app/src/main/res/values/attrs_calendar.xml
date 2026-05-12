@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CalendarView">
+
+        <!-- ── 배경 ── -->
+        <attr name="cal_background_color"        format="color" />
+
+        <!-- ── 헤더 텍스트 ── -->
+        <attr name="cal_header_color"            format="color" />
+        <attr name="cal_header_text_size"        format="dimension" />
+        <attr name="cal_header_padding"          format="dimension" />
+        <attr name="cal_header_btn_size"         format="dimension" />
+
+        <!-- ── 요일 라벨 ── -->
+        <attr name="cal_weekday_sun_color"       format="color" />
+        <attr name="cal_weekday_sat_color"       format="color" />
+        <attr name="cal_weekday_default_color"   format="color" />
+        <attr name="cal_weekday_label_text_size" format="dimension" />
+        <attr name="cal_label_padding_v"         format="dimension" />
+
+        <!-- ── 날짜 셀 ── -->
+        <attr name="cal_day_text_size"           format="dimension" />
+        <attr name="cal_day_text_color"          format="color" />
+        <attr name="cal_day_sun_color"           format="color" />
+        <attr name="cal_day_sat_color"           format="color" />
+        <attr name="cal_cell_padding_v"          format="dimension" />
+        <attr name="cal_cell_padding_h"          format="dimension" />
+        <attr name="cal_cell_min_size"           format="dimension" />
+        <attr name="cal_cell_margin"             format="dimension" />
+        <attr name="cal_other_month_alpha"       format="float" />
+
+        <!-- ── 오늘 날짜 ── -->
+        <attr name="cal_today_stroke_color"      format="color" />
+        <attr name="cal_today_fill_color"        format="color" />
+
+        <!-- ── 선택 날짜 ── -->
+        <attr name="cal_selected_fill_color"     format="color" />
+        <attr name="cal_selected_text_color"     format="color" />
+
+        <!-- ── dot indicator ── -->
+        <attr name="cal_dot_color"               format="color" />
+        <attr name="cal_dot_size"                format="dimension" />
+
+    </declare-styleable>
+</resources>

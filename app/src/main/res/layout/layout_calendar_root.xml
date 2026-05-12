@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/cal_background_color">
+
+    <!-- 1. 월간 헤더 (년/월 + 이전/다음 버튼) - 주간 모드 시 GONE -->
+    <include
+        android:id="@+id/calendar_header"
+        layout="@layout/layout_calendar_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 2. 요일 라벨 (일~토) - 월간 모드만 표시 -->
+    <include
+        android:id="@+id/calendar_day_labels"
+        layout="@layout/layout_calendar_day_labels"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/calendar_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 3. 월간 그리드 -->
+    <include
+        android:id="@+id/calendar_month"
+        layout="@layout/layout_calendar_month"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/calendar_day_labels"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 4. 주간 뷰 (날짜 선택 후 VISIBLE, 헤더+요일 통합) -->
+    <include
+        android:id="@+id/calendar_week"
+        layout="@layout/layout_calendar_week"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_below_grid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="calendar_month,calendar_week" />
+
+    <!-- 5. 상세 패널 -->
+    <include
+        android:id="@+id/calendar_detail"
+        layout="@layout/layout_calendar_detail"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/barrier_below_grid"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

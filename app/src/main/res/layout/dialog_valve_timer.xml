@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 밸브 가동 시간 설정 다이얼로그 -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_white_card">
+
+    <!-- 헤더 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/gradient_forest_header"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:id="@+id/tvTimerTargetLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="토출 밸브 전체"
+            android:textColor="@color/mist"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="가동 시간 설정"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 시간 프리셋 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="빠른 선택"
+            android:textSize="13sp"
+            android:textColor="@color/text_hint"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 프리셋 1행 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/btnPreset10"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="10분"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@drawable/bg_preset_btn"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/btnPreset20"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="20분"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@drawable/bg_preset_btn"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/btnPreset30"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="30분"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@drawable/bg_preset_btn" />
+        </LinearLayout>
+
+        <!-- 프리셋 2행 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/btnPreset60"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="1시간"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@drawable/bg_preset_btn"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/btnPreset90"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="1시간 30분"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@drawable/bg_preset_btn"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/btnPreset120"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="2시간"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@drawable/bg_preset_btn" />
+        </LinearLayout>
+
+        <!-- 구분선 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginBottom="16dp" />
+
+        <!-- 직접 입력: 시/분 NumberPicker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="직접 입력"
+            android:textSize="13sp"
+            android:textColor="@color/text_hint"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <!-- 시간 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <com.acasian.iot.Calendar.view.WheelTimePickerView
+                    android:id="@+id/pickerTimerHour"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="시간"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp" />
+            </LinearLayout>
+
+            <!-- 구분 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="&#183;"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:paddingBottom="24dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp" />
+
+            <!-- 분 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <com.acasian.iot.Calendar.view.WheelTimePickerView
+                    android:id="@+id/pickerTimerMinute"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="분"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 선택된 시간 요약 표시 -->
+        <TextView
+            android:id="@+id/tvTimerSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="가동 시간: 30분"
+            android:textSize="15sp"
+            android:textColor="@color/forest_dark"
+            android:textStyle="bold"
+            android:paddingTop="12dp"
+            android:paddingBottom="4dp" />
+    </LinearLayout>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+
+    <!-- 버튼 행 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="16dp">
+
+        <Button
+            android:id="@+id/btnTimerCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:text="취소"
+            android:textSize="17sp"
+            android:textColor="@color/text_hint"
+            android:background="@null"
+            android:paddingStart="20dp"
+            android:paddingEnd="12dp" />
+
+        <Button
+            android:id="@+id/btnTimerConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:text="가동 시작"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_btn_zone_start"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp" />
+    </LinearLayout>
+
+</LinearLayout>

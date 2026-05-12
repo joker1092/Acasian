@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ── 앱 공통 크기 ── -->
+    <dimen name="screen_margin">16dp</dimen>
+    <dimen name="card_radius">18dp</dimen>
+    <dimen name="input_height">54dp</dimen>
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="toggle_width">56dp</dimen>
+    <dimen name="toggle_height">28dp</dimen>
+    <dimen name="toggle_sm_width">38dp</dimen>
+    <dimen name="toggle_sm_height">20dp</dimen>
+    <dimen name="nav_height">76dp</dimen>
+    <dimen name="header_height">220dp</dimen>
+    <dimen name="main_header_height">150dp</dimen>
+    <dimen name="sensor_height">88dp</dimen>
+    <dimen name="section_label_size">13sp</dimen>
+    <dimen name="device_icon_size">42dp</dimen>
+    <dimen name="avatar_size">44dp</dimen>
+
+    <!-- ── 달력 전용 크기 (@dimen 로 관리 → themes.xml에서 참조) ── -->
+
+    <!-- 헤더 영역 -->
+    <dimen name="cal_header_padding">10dp</dimen>
+    <dimen name="cal_header_btn_size">52dp</dimen>   <!-- 이전/다음 버튼 터치 영역 -->
+    <dimen name="cal_header_text_size">22sp</dimen>
+
+    <!-- 요일 라벨 행 -->
+    <dimen name="cal_label_padding_v">10dp</dimen>    <!-- 상하 패딩 -->
+    <dimen name="cal_label_text_size">14sp</dimen>
+
+    <!-- 날짜 셀 -->
+    <!--
+        셀 텍스트뷰를 wrap_content 로 하고 minWidth/minHeight 로 최소 터치 영역 보장.
+        고정 36dp 대신 화면 비율에 따라 늘어나도록 합니다.
+    -->
+    <dimen name="cal_cell_padding_v">6dp</dimen>
+    <dimen name="cal_cell_padding_h">2dp</dimen>
+    <dimen name="cal_cell_min_size">42dp</dimen>     <!-- 최소 터치 영역 (WCAG 권장 48dp, 달력 공간상 32dp) -->
+    <dimen name="cal_cell_text_size">17sp</dimen>
+    <dimen name="cal_cell_margin">1dp</dimen>
+
+    <!-- dot indicator -->
+    <dimen name="cal_dot_size">4dp</dimen>
+    <dimen name="cal_dot_margin_top">1dp</dimen>
+
+    <!-- 하단 내비게이션 -->
+    <dimen name="cal_bottom_nav_height">56dp</dimen>
+</resources>

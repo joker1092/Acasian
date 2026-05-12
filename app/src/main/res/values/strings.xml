@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">아카시안</string>
+    <string name="app_subtitle">스마트 농업 · 조경 · 산림</string>
+    <string name="app_tagline">자연과 기술의 연결</string>
+
+    <!-- Login -->
+    <string name="welcome_back">다시 오신 것을 환영해요</string>
+    <string name="iot_system">IoT 스마트 제어 시스템</string>
+    <string name="label_id">아이디</string>
+    <string name="label_password">비밀번호</string>
+    <string name="hint_id">이메일을 입력하세요</string>
+    <string name="hint_password">비밀번호를 입력하세요</string>
+    <string name="btn_login">로그인</string>
+    <string name="find_password">비밀번호 찾기</string>
+    <string name="or">또는</string>
+    <string name="kakao_login">카카오로 시작하기</string>
+    <string name="no_account">계정이 없으신가요?</string>
+    <string name="sign_up">회원가입</string>
+
+    <!-- Main -->
+    <string name="good_morning">GOOD MORNING</string>
+    <string name="farm_name">홍길동 농장 🌿</string>
+    <string name="system_ok">시스템 정상 운영</string>
+    <string name="last_sync">마지막 동기화: 방금 전</string>
+    <string name="device_on_count">12 / 14 ON</string>
+    <string name="master_control_zone">CONTROL BOX · A구역</string>
+    <string name="master_title">전체 시스템 제어</string>
+    <string name="master_status_on">현재 상태: 운영 중</string>
+    <string name="section_master">마스터 제어</string>
+    <string name="section_devices">개별 기기 제어</string>
+
+    <!-- Sensor -->
+    <string name="temp_label">온도</string>
+    <string name="humidity_label">습도</string>
+    <string name="light_label">조도</string>
+    <string name="soil_label">토양</string>
+
+    <!-- Nav -->
+    <string name="nav_home">홈</string>
+    <string name="nav_devices">기기</string>
+    <string name="nav_log">기록</string>
+    <string name="nav_settings">설정</string>
+
+    <!-- Devices -->
+    <string name="device_pump">관개 펌프</string>
+    <string name="device_sensor">환경 센서</string>
+    <string name="device_shade">차양막</string>
+    <string name="device_led">LED 조명</string>
+    <string name="zone_a01">A-01 구역</string>
+    <string name="zone_temp">온습도 측정</string>
+    <string name="zone_b02">B-02 구역</string>
+    <string name="zone_facility">시설동 전체</string>
+    <string name="status_on">ON</string>
+    <string name="status_off">OFF</string>
+
+    <!-- ── 달력 전용 문자열 ── -->
+    <!-- 요일 라벨 (하드코딩 "일","월"... 제거) -->
+    <string name="cal_sunday">일</string>
+    <string name="cal_monday">월</string>
+    <string name="cal_tuesday">화</string>
+    <string name="cal_wednesday">수</string>
+    <string name="cal_thursday">목</string>
+    <string name="cal_friday">금</string>
+    <string name="cal_saturday">토</string>
+
+    <!-- 접근성 -->
+    <string name="cal_btn_prev">이전 달</string>
+    <string name="cal_btn_next">다음 달</string>
+    <string name="cal_btn_prev_week">이전 주</string>
+    <string name="cal_btn_next_week">다음 주</string>
+
+    <!-- 기기 상태 -->
+    <string name="device_status_idle">휴게</string>
+    <string name="device_status_running">관수중</string>
+    <string name="device_status_standby">대기 중</string>
+    <string name="device_status_error">점검 필요</string>
+
+    <!-- 기기 타입 라벨 -->
+    <string name="device_label_pump">PUMP</string>
+    <string name="device_label_sensor">SENSOR</string>
+    <string name="device_label_shade">SHADE</string>
+    <string name="device_label_led">LED</string>
+</resources>

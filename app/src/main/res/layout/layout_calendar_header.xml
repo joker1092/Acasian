@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    변경 내역:
+    - android:padding="8dp"       → ?attr/cal_header_padding
+    - android:layout_width="48dp" → ?attr/cal_header_btn_size (버튼 동적 크기)
+    - android:textSize="20sp"     → ?attr/cal_header_text_size
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="?attr/cal_header_padding">
+
+    <ImageButton
+        android:id="@+id/btn_prev_month"
+        android:layout_width="?attr/cal_header_btn_size"
+        android:layout_height="?attr/cal_header_btn_size"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_previous"
+        android:contentDescription="@string/cal_btn_prev" />
+
+    <TextView
+        android:id="@+id/txt_year_month"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="?attr/cal_header_color"
+        android:textSize="?attr/cal_header_text_size"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/btn_next_month"
+        android:layout_width="?attr/cal_header_btn_size"
+        android:layout_height="?attr/cal_header_btn_size"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/ic_media_next"
+        android:contentDescription="@string/cal_btn_next" />
+
+</LinearLayout>

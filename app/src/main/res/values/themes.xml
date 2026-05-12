@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ══ 기본 테마 ══ -->
+    <style name="Theme.AAA" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/forest_mid</item>
+        <item name="colorPrimaryVariant">@color/forest_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/leaf</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/morning</item>
+        <item name="android:windowBackground">@color/morning</item>
+        <item name="android:statusBarColor">@color/forest_dark</item>
+        <item name="android:navigationBarColor">@color/white</item>
+
+        <!-- ── 달력 attr 값: 모두 @color/@dimen 참조 (하드코딩 없음) ── -->
+
+        <!-- 배경 -->
+        <item name="cal_background_color">@color/cal_bg</item>
+
+        <!-- 헤더 -->
+        <item name="cal_header_color">@color/cal_header_text</item>
+        <item name="cal_header_text_size">@dimen/cal_header_text_size</item>
+        <item name="cal_header_padding">@dimen/cal_header_padding</item>
+        <item name="cal_header_btn_size">@dimen/cal_header_btn_size</item>
+
+        <!-- 요일 라벨 -->
+        <item name="cal_weekday_sun_color">@color/cal_sunday</item>
+        <item name="cal_weekday_sat_color">@color/cal_saturday</item>
+        <item name="cal_weekday_default_color">@color/cal_weekday</item>
+        <item name="cal_weekday_label_text_size">@dimen/cal_label_text_size</item>
+        <item name="cal_label_padding_v">@dimen/cal_label_padding_v</item>
+
+        <!-- 날짜 셀 -->
+        <item name="cal_day_text_size">@dimen/cal_cell_text_size</item>
+        <item name="cal_day_text_color">@color/cal_day_default</item>
+        <item name="cal_day_sun_color">@color/cal_day_sunday</item>
+        <item name="cal_day_sat_color">@color/cal_day_saturday</item>
+        <item name="cal_cell_padding_v">@dimen/cal_cell_padding_v</item>
+        <item name="cal_cell_padding_h">@dimen/cal_cell_padding_h</item>
+        <item name="cal_cell_min_size">@dimen/cal_cell_min_size</item>
+        <item name="cal_cell_margin">@dimen/cal_cell_margin</item>
+        <item name="cal_other_month_alpha">0.35</item>
+
+        <!-- 오늘 날짜 -->
+        <item name="cal_today_stroke_color">@color/cal_today_stroke</item>
+        <item name="cal_today_fill_color">@color/cal_today_fill</item>
+
+        <!-- 선택 날짜 -->
+        <item name="cal_selected_fill_color">@color/cal_selected_fill</item>
+        <item name="cal_selected_text_color">@color/cal_selected_text</item>
+
+        <!-- dot -->
+        <item name="cal_dot_color">@color/cal_dot</item>
+        <item name="cal_dot_size">@dimen/cal_dot_size</item>
+    </style>
+
+    <!-- ══ 스플래시 전용 테마 ══ -->
+    <style name="Theme.AAA.Splash" parent="Theme.AAA">
+        <item name="android:windowBackground">@color/splash_bg</item>
+        <item name="android:statusBarColor">@color/splash_bg</item>
+        <item name="android:navigationBarColor">@color/splash_bg</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <!-- ══ TextInputLayout ══ -->
+    <style name="Widget.AAA.TextInputLayout"
+           parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/input_border_color_selector</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="hintTextColor">@color/moss</item>
+        <item name="boxBackgroundColor">@color/white</item>
+    </style>
+
+    <!-- ══ 로그인 버튼 ══ -->
+    <style name="Widget.AAA.LoginButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:letterSpacing">0.05</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="backgroundTint">@color/forest_mid</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="elevation">6dp</item>
+    </style>
+
+    <!-- ══ 기기 카드 ══ -->
+    <style name="Widget.AAA.DeviceCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="cardElevation">3dp</item>
+        <item name="cardBackgroundColor">@color/card_bg</item>
+        <item name="contentPadding">0dp</item>
+    </style>
+
+    <!-- BottomSheet 테마 -->
+    <style name="BottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+</resources>

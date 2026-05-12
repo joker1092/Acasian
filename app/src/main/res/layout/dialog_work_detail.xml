@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/forest_mid"
+    android:padding="24dp">
+
+    <!-- 헤더: 작업명 + 상태 뱃지 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+        <TextView android:id="@+id/dlg_task_name"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white" android:textSize="20sp" android:textStyle="bold" />
+        <TextView android:id="@+id/dlg_status_badge"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textSize="19sp" android:textStyle="bold" android:textColor="@color/white"
+            android:background="@drawable/bg_badge_ok"
+            android:paddingStart="12dp" android:paddingEnd="12dp"
+            android:paddingTop="6dp" android:paddingBottom="6dp" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/moss" android:layout_marginBottom="16dp" />
+
+    <!-- 날짜 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="날짜" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_date"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 시작 시간 (종료 시간 제거) -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="시간" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_time"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/moss" android:layout_marginBottom="16dp" />
+
+    <!-- 유형명 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="유형" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_profile_name"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 제어 대상 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="제어" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_zone"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 가동 시간 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="가동" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_run"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 휴지 시간 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="12dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="휴지" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_rest"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 반복 횟수 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="16dp">
+        <TextView android:layout_width="72dp" android:layout_height="wrap_content"
+            android:text="반복" android:textColor="@color/mist" android:textSize="18sp" />
+        <TextView android:id="@+id/dlg_repeat"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:textColor="@color/white" android:textSize="19sp" android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 호환용 숨김 -->
+    <TextView android:id="@+id/dlg_device"
+        android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <TextView android:id="@+id/dlg_memo"
+        android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <LinearLayout android:id="@+id/dlg_profile_section"
+        android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/moss" android:layout_marginBottom="16dp" />
+
+    <!-- 버튼 행 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="end">
+        <Button android:id="@+id/dlg_btn_cancel_reservation"
+            android:layout_width="wrap_content" android:layout_height="48dp"
+            android:text="예약 취소"
+            android:textSize="18sp" android:textColor="@color/device_accent_error"
+            android:background="@null" android:visibility="gone"
+            android:layout_marginEnd="8dp" />
+        <Button android:id="@+id/dlg_btn_close"
+            android:layout_width="wrap_content" android:layout_height="48dp"
+            android:text="닫기"
+            android:textSize="18sp" android:textStyle="bold" android:textColor="@color/white"
+            android:background="@drawable/bg_login_button"
+            android:paddingStart="24dp" android:paddingEnd="24dp" />
+    </LinearLayout>
+
+</LinearLayout>

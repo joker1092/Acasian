@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_irrigation_card"
+    android:padding="16dp" android:layout_marginBottom="10dp">
+
+    <!-- 상단: 그룹명 + 수정/삭제 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="10dp">
+
+        <!-- 그룹명 -->
+        <TextView android:id="@+id/tvGroupName"
+            android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="그룹명" android:textSize="17sp" android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <!-- 수정 -->
+        <TextView android:id="@+id/btnGroupEdit"
+            android:layout_width="36dp" android:layout_height="36dp"
+            android:gravity="center" android:text="✏"
+            android:textSize="16sp" android:textColor="@color/moss"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true" android:focusable="true" />
+
+        <!-- 삭제 -->
+        <TextView android:id="@+id/btnGroupDelete"
+            android:layout_width="36dp" android:layout_height="36dp"
+            android:gravity="center" android:text="✕"
+            android:textSize="16sp" android:textColor="@color/device_accent_error"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true" android:focusable="true" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="@color/divider" android:layout_marginBottom="10dp" />
+
+    <!-- 밸브 목록 -->
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="밸브" android:textSize="12sp" android:textColor="@color/text_hint"
+        android:layout_marginBottom="6dp" />
+    <LinearLayout android:id="@+id/groupNodeBadgeContainer"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+</LinearLayout>

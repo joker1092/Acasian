@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    주간 뷰 - 헤더 역할 통합 버전
+    ◀  요:일 요:일 요:일 요:일 요:일 요:일 요:일  ▶
+    (월간 헤더와 요일 라벨을 완전 대체)
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/cal_background_color">
+
+    <!-- 이전 달 / 월 표시 / 다음 달 행 (주간 모드에서 월 표시) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp">
+
+        <!-- btn_back_to_month: 호환용 숨김 -->
+        <TextView
+            android:id="@+id/btn_back_to_month"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txt_week_year_month"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textColor="?attr/cal_header_color"
+            android:textSize="?attr/cal_header_text_size"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <!-- ◀ 날짜 셀들 ▶ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingBottom="8dp">
+
+        <ImageButton
+            android:id="@+id/btn_prev_week"
+            android:layout_width="?attr/cal_header_btn_size"
+            android:layout_height="?attr/cal_header_btn_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_previous"
+            android:contentDescription="@string/cal_btn_prev_week" />
+
+        <LinearLayout
+            android:id="@+id/week_days_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center" />
+
+        <ImageButton
+            android:id="@+id/btn_next_week"
+            android:layout_width="?attr/cal_header_btn_size"
+            android:layout_height="?attr/cal_header_btn_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_media_next"
+            android:contentDescription="@string/cal_btn_next_week" />
+
+    </LinearLayout>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#33FFFFFF"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp" />
+
+</LinearLayout>

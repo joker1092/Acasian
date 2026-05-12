@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  예약 리스트 카드
+  반복(isRepeat=1): 시간 크게 + 요일 칩 + 토글
+  단건(isRepeat=0): 시간 크게(회색) + 날짜 텍스트 + 토글
+-->
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/card_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <!-- 상단: 유형명 + 상태 배지 -->
+        <LinearLayout
+            android:id="@+id/rowCardTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="6dp">
+
+            <!-- 반복 아이콘 (반복 예약일 때만 VISIBLE) -->
+            <TextView
+                android:id="@+id/tvRepeatIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔁"
+                android:textSize="12sp"
+                android:layout_marginEnd="5dp"
+                android:visibility="gone"/>
+
+            <!-- 유형명 -->
+            <TextView
+                android:id="@+id/tvCardTypeName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="봄 아침 관수"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- 상태 배지: 예약/완료/미실행 -->
+            <TextView
+                android:id="@+id/tvCardStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="예약"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/bg_badge_ok"
+                android:textColor="#1B5E20"/>
+        </LinearLayout>
+
+        <!-- 중단: 시간(크게) + 요일/날짜 + 토글 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- 시간 -->
+            <TextView
+                android:id="@+id/tvCardTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오전 6:30"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginEnd="16dp"/>
+
+            <!-- 요일/날짜 영역 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <!-- 반복: 밸브 그룹 목록 -->
+                <TextView
+                    android:id="@+id/tvValveGroup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전체 관수"
+                    android:textSize="12sp"
+                    android:textColor="@color/moss"
+                    android:visibility="gone"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+
+                <!-- 단건: 날짜 텍스트 -->
+                <TextView
+                    android:id="@+id/tvCardDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5월 12일 (화)"
+                    android:textSize="13sp"
+                    android:textColor="@color/inactive_gray"
+                    android:visibility="gone"/>
+
+                <!-- 메인함 이름 -->
+                <TextView
+                    android:id="@+id/tvCardZone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="컨트롤박스 #1"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_hint"
+                    android:layout_marginTop="3dp"/>
+            </LinearLayout>
+
+            <!-- 토글 -->
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchCardActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

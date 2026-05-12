@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 관수 유형 가로 스크롤용 소형 카드 -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="140dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_irrigation_card"
+    android:padding="12dp"
+    android:layout_marginEnd="10dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 유형 이름 -->
+    <TextView
+        android:id="@+id/tvTypeName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="봄 아침 관수"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_marginBottom="10dp" />
+
+    <!-- 가동 시간 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+        <TextView android:layout_width="36dp" android:layout_height="wrap_content"
+            android:text="가동" android:textSize="11sp" android:textColor="@color/text_hint" />
+        <TextView android:id="@+id/tvRunMinutes"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="30분" android:textSize="15sp" android:textStyle="bold"
+            android:textColor="@color/forest_dark" />
+    </LinearLayout>
+
+    <!-- 휴지 시간 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+        <TextView android:layout_width="36dp" android:layout_height="wrap_content"
+            android:text="휴지" android:textSize="11sp" android:textColor="@color/text_hint" />
+        <TextView android:id="@+id/tvRestMinutes"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="없음" android:textSize="15sp" android:textStyle="bold"
+            android:textColor="@color/text_secondary" />
+    </LinearLayout>
+
+    <!-- 반복 횟수 -->
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+        <TextView android:layout_width="36dp" android:layout_height="wrap_content"
+            android:text="반복" android:textSize="11sp" android:textColor="@color/text_hint" />
+        <TextView android:id="@+id/tvRepeatCount"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="1회" android:textSize="15sp" android:textStyle="bold"
+            android:textColor="@color/text_secondary" />
+    </LinearLayout>
+
+    <!-- 제어 대상 뱃지 -->
+    <TextView
+        android:id="@+id/tvTargetBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전체"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_badge_ok"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp" />
+
+</LinearLayout>

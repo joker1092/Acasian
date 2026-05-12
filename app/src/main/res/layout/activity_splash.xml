@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_splash_bg">
+
+    <!-- 별빛 레이어 (커스텀 뷰) -->
+    <com.acasian.iot.view.StarFieldView
+        android:id="@+id/starFieldView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 숲 실루엣 (커스텀 뷰) -->
+    <com.acasian.iot.view.ForestSilhouetteView
+        android:id="@+id/forestView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- 중앙 로고 그룹 -->
+    <LinearLayout
+        android:id="@+id/logoGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:alpha="0"
+        android:translationY="40dp">
+
+        <!-- CAMSTECH 로고 (흰 카드 위) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_splash_logo_card"
+            android:paddingStart="28dp"
+            android:paddingEnd="28dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="18dp"
+            android:layout_marginBottom="18dp">
+
+            <!-- CAMSTECH 로고 이미지 -->
+            <ImageView
+                android:layout_width="160dp"
+                android:layout_height="92dp"
+                android:src="@drawable/ic_camstech_logo"
+                android:scaleType="fitCenter"
+                android:contentDescription="CAMSTECH" />
+
+        </LinearLayout>
+
+        <!-- 앱 이름 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="아카시안"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:letterSpacing="0.08"
+            android:layout_marginBottom="4dp" />
+
+        <!-- 태그라인 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SMART FARM CONTROL"
+            android:textSize="20sp"
+            android:textColor="#A5D6A7"
+            android:letterSpacing="0.18" />
+
+        <!-- 아카시안 장비 태그 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🌿 아카시안 시리즈 전용"
+            android:textSize="20sp"
+            android:textColor="#1B5E20"
+            android:background="@drawable/bg_acacia_tag"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginTop="12dp" />
+
+    </LinearLayout>
+
+    <!-- 하단 로더 (3-dot) -->
+    <LinearLayout
+        android:id="@+id/loaderGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="72dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:alpha="0"
+        android:spacing="0dp">
+
+        <View android:id="@+id/dot1"
+            android:layout_width="10dp" android:layout_height="10dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/dot_shape" android:alpha="0.2" />
+        <View android:id="@+id/dot2"
+            android:layout_width="10dp" android:layout_height="10dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/dot_shape" android:alpha="0.2" />
+        <View android:id="@+id/dot3"
+            android:layout_width="10dp" android:layout_height="10dp"
+            android:background="@drawable/dot_shape" android:alpha="0.2" />
+    </LinearLayout>
+
+</FrameLayout>

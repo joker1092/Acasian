@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 타임라인 날짜 구분선 (중앙 수직선 유지로 타임라인 연속) -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="4dp">
+
+    <!-- 좌: 시간 영역 (아이템과 정렬 맞춤 64dp) -->
+    <View
+        android:layout_width="64dp"
+        android:layout_height="0dp" />
+
+    <!-- 중: 타임라인 연속선 (28dp, 점 없이 선만) -->
+    <LinearLayout
+        android:layout_width="28dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- 위에서 이어지는 선 -->
+        <View
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/divider" />
+
+        <!-- 중앙 마름모 구분점 -->
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_timeline_dot_scheduled" />
+
+        <!-- 아래로 이어지는 선 -->
+        <View
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/divider" />
+    </LinearLayout>
+
+    <!-- 우: 날짜 텍스트 (수평 가운데) -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp">
+
+        <!-- 좌 선 -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1.5dp"
+            android:layout_weight="0.3"
+            android:background="@color/divider"
+            android:layout_marginEnd="8dp" />
+
+        <!-- 날짜 pill -->
+        <TextView
+            android:id="@+id/tvDateHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3월 24일 (오늘)"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/moss"
+            android:background="@drawable/bg_date_header_pill"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+        <!-- 우 선 -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1.5dp"
+            android:layout_weight="1"
+            android:background="@color/divider"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+</LinearLayout>

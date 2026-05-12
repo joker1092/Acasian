@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ══ 앱 공통 팔레트 (밝은 계열 / 높은 명암 대비) ══ -->
+
+    <!-- 메인 그린 계열 (Material Green 기반) -->
+    <color name="forest_dark">#1B5E20</color>   <!-- 헤더 배경, 진한 포인트 (이전 #1A2E1A) -->
+    <color name="forest_mid">#2E7D32</color>    <!-- 구역 카드, 버튼 배경 (이전 #2D4A2D) -->
+    <color name="moss">#388E3C</color>           <!-- 활성 탭, 포커스 보더 (이전 #4A6741) -->
+    <color name="leaf">#43A047</color>           <!-- 보조 액션 (이전 #6B8F4E) -->
+    <color name="sage">#66BB6A</color>           <!-- 보조 텍스트 on dark (이전 #8AAF72) -->
+    <color name="mist">#A5D6A7</color>           <!-- 헤더 위 밝은 보조 텍스트 (이전 #B8D4A0) -->
+    <color name="morning">#E8F5E9</color>        <!-- 앱 전체 배경 (이전 #E8F5E0) -->
+    <color name="cream">#F1F8E9</color>          <!-- 로그인 배경 (이전 #F5F0E8) -->
+
+    <!-- 어스 톤 -->
+    <color name="soil">#4E342E</color>
+    <color name="bark">#5D4037</color>           <!-- 섹션 라벨 (이전 #8B6F4E) -->
+    <color name="gold">#F9A825</color>           <!-- 경고색 (이전 #C8A84B) -->
+
+    <!-- 상태 색상 -->
+    <color name="active_green">#00C853</color>   <!-- 작동 중 도트 (이전 #7EDB6A) -->
+
+    <!-- 중성 -->
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#F1F8E9</color>     <!-- 앱 배경 (이전 #F4F6F2) -->
+    <color name="card_bg">#FFFFFF</color>
+    <color name="divider">#C8E6C9</color>        <!-- 구분선 (이전 #E8EDE5) -->
+
+    <!-- 텍스트 -->
+    <color name="text_primary">#1B5E20</color>   <!-- 주 텍스트 (이전 #1A2E1A) -->
+    <color name="text_secondary">#558B2F</color> <!-- 보조 텍스트 (이전 #8B6F4E) -->
+    <color name="text_hint">#81C784</color>      <!-- 힌트 텍스트 (이전 #AAAAAA) -->
+    <color name="inactive_gray">#9E9E9E</color>
+    <color name="inactive_bg">#F5F5F5</color>
+
+    <!-- 네비 / 시스템 -->
+    <color name="nav_bg">#FFFFFF</color>
+    <color name="splash_bg">#0D2B0D</color>      <!-- 스플래시 배경 (조금 밝게) -->
+    <color name="header_start">#1B5E20</color>
+    <color name="header_end">#2E7D32</color>
+    <color name="toggle_off">#BDBDBD</color>
+
+    <!-- 입력 -->
+    <color name="sensor_strip_bg">#F1F8E9</color>
+    <color name="input_border">#A5D6A7</color>          <!-- 입력 기본 테두리 (이전 #D0DEC8) -->
+    <color name="input_focused_border">#388E3C</color>  <!-- 포커스 테두리 (이전 #4A6741) -->
+    <color name="overlay_white_07">#12FFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- ══ 달력 전용 ══ -->
+    <color name="cal_bg">#1B5E20</color>                <!-- 달력 배경 (이전 forest_dark) -->
+    <color name="cal_header_text">#FFFFFF</color>
+    <color name="cal_sunday">#FFFFFF</color>
+    <color name="cal_saturday">#A5D6A7</color>
+    <color name="cal_weekday">#FFFFFF</color>
+    <color name="cal_day_default">#FFFFFF</color>
+    <color name="cal_day_sunday">#FF5252</color>
+    <color name="cal_day_saturday">#80D8FF</color>       <!-- 더 밝은 파랑 (이전 #64B5F6) -->
+    <color name="cal_today_stroke">#A5D6A7</color>
+    <color name="cal_today_fill">#2E7D32</color>
+    <color name="cal_selected_fill">#388E3C</color>
+    <color name="cal_selected_text">#FFFFFF</color>
+    <color name="cal_dot">#00C853</color>
+
+    <!-- ══ 기기 카드 상태별 배경 ══ -->
+    <color name="device_bg_idle">#FFFFFF</color>
+    <color name="device_bg_running">#E8F5E9</color>     <!-- 연초록 (유지) -->
+    <color name="device_bg_standby">#F5F5F5</color>
+    <color name="device_bg_error">#FFEBEE</color>
+
+    <!-- 상태 텍스트/아이콘 강조 (대비 강화) -->
+    <color name="device_accent_idle">#757575</color>    <!-- 이전 #AAAAAA → 더 진하게 -->
+    <color name="device_accent_running">#1B5E20</color> <!-- 이전 #2E7D32 → 더 진하게 -->
+    <color name="device_accent_standby">#424242</color> <!-- 이전 #757575 → 더 진하게 -->
+    <color name="device_accent_error">#B71C1C</color>
+    <color name="device_accent_warn">#EF9F27</color>
+
+    <!-- 상태 도트 -->
+    <color name="device_dot_idle">#BDBDBD</color>
+    <color name="device_dot_running">#00C853</color>    <!-- 더 선명한 초록 -->
+    <color name="device_dot_standby">#757575</color>
+    <color name="device_dot_error">#F44336</color>      <!-- 더 선명한 빨강 -->
+</resources>

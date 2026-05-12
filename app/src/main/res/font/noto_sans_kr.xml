@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    [사용 방법]
+    1. https://fonts.google.com/noto/specimen/Noto+Sans+KR 에서 다운로드
+    2. 아래 ttf 파일들을 res/font/ 폴더에 복사
+       - noto_sans_kr_regular.ttf
+       - noto_sans_kr_medium.ttf
+       - noto_sans_kr_bold.ttf
+    3. 이 파일의 주석을 해제하고 사용
+
+    현재는 ttf 파일 없이도 빌드 통과되도록 비어있는 상태입니다.
+    폰트 파일 없이는 시스템 기본 폰트(Roboto)가 자동 적용됩니다.
+-->
+<!--
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+    <font app:fontStyle="normal" app:fontWeight="400" app:font="@font/noto_sans_kr_regular" />
+    <font app:fontStyle="normal" app:fontWeight="500" app:font="@font/noto_sans_kr_medium" />
+    <font app:fontStyle="normal" app:fontWeight="700" app:font="@font/noto_sans_kr_bold"   />
+</font-family>
+-->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android" />

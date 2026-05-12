@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- ── 헤더: 그린 배경 + 하단 곡선 ── -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_forest_header">
+
+            <!-- 하단 곡선 마스크 (폼 배경색과 동일) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/curve_bottom_cream" />
+
+            <!-- 헤더 콘텐츠 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:paddingTop="56dp"
+                android:paddingBottom="48dp">
+
+                <!-- CAMSTECH 배지 (우측 정렬) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginBottom="18dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_camstech_badge"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="12dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_camstech_logo"
+                            android:scaleType="fitCenter"
+                            android:contentDescription="CAMSTECH" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CAMSTECH"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            android:letterSpacing="0.08"
+                            android:layout_marginStart="6dp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 앱 이름 (아이콘 없이) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="36sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:letterSpacing="-0.02"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- 부제목 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/iot_system"
+                    android:textSize="14sp"
+                    android:textColor="@color/mist"
+                    android:letterSpacing="0.03" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- ── 로그인 폼 ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="30dp"
+            android:paddingBottom="40dp">
+
+            <!-- 섹션 타이틀 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="로그인"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="6dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전화번호와 비밀번호를 입력해 주세요"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginBottom="24dp" />
+
+            <!-- 전화번호 입력 -->
+            <LinearLayout
+                android:id="@+id/containerPhoneField"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_input_normal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginBottom="14dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_user"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="전화번호" />
+
+                <EditText
+                    android:id="@+id/etPhone"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="010-0000-0000"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
+                    android:background="@null"
+                    android:inputType="phone"
+                    android:maxLength="13"
+                    android:imeOptions="actionNext" />
+            </LinearLayout>
+
+            <!-- 비밀번호 입력 -->
+            <LinearLayout
+                android:id="@+id/containerPasswordField"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/input_height"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_input_normal"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:layout_marginBottom="28dp">
+
+                <ImageView
+                    android:id="@+id/icLock"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_lock"
+                    android:layout_marginEnd="12dp"
+                    android:contentDescription="비밀번호" />
+
+                <EditText
+                    android:id="@+id/etPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="비밀번호"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
+                    android:background="@null"
+                    android:inputType="textPassword"
+                    android:imeOptions="actionDone" />
+
+                <ImageView
+                    android:id="@+id/btnTogglePassword"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_eye_off"
+                    android:padding="2dp"
+                    android:contentDescription="비밀번호 표시"
+                    android:background="?attr/selectableItemBackgroundBorderless" />
+            </LinearLayout>
+
+            <!-- 로그인 버튼 -->
+            <Button
+                android:id="@+id/btnLogin"
+                style="@style/Widget.AAA.LoginButton"
+                android:text="로그인"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 로딩 인디케이터 -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/forest_mid"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp" />
+
+            <!-- 구분선 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- 계정 문의 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="계정이 없으신가요?"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="관리자에게 계정 등록을 요청하세요"
+                    android:textSize="13sp"
+                    android:textColor="@color/moss"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

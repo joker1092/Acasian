@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cal_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- 헤더 -->
+        <FrameLayout
+            android:id="@+id/scheduleHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/gradient_forest_header">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp">
+                <ImageView
+                    android:id="@+id/btnScheduleBack"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:src="@drawable/ic_nav_home"
+                    android:tint="@color/white"
+                    android:padding="10dp"
+                    android:contentDescription="뒤로"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="예약설정"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:paddingStart="4dp"/>
+
+                <!-- 월간 보기 복귀 버튼 (주간 뷰일 때만 표시) -->
+                <TextView
+                    android:id="@+id/btnBackToMonth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="월간 보기"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#A5D6A7"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="4dp"
+                    android:visibility="gone"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- 월간 달력 (접기/펼치기 대상) -->
+        <include
+            android:id="@+id/calendar_header"
+            layout="@layout/layout_calendar_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <include
+            android:id="@+id/calendar_day_labels"
+            layout="@layout/layout_calendar_day_labels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <include
+            android:id="@+id/calendar_month"
+            layout="@layout/layout_calendar_month"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <!-- 주간 바 (날짜 선택 후 표시, 초기 GONE) -->
+        <include
+            android:id="@+id/calendar_week"
+            layout="@layout/layout_calendar_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+        <!-- 상세 패널 (날짜 탭 후 VISIBLE) -->
+        <include
+            android:id="@+id/calendar_detail"
+            layout="@layout/layout_calendar_detail"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <!-- ITM Fragment overlay (기존 유지) -->
+    <FrameLayout
+        android:id="@+id/scheduleOverlayContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

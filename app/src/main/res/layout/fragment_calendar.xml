@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    CalendarFragment 레이아웃
+    네비바는 MainActivity의 것을 그대로 사용 (이 레이아웃에 포함 안 함)
+    paddingBottom은 Java에서 nav_height만큼 동적으로 설정
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cal_bg">
+
+    <include
+        android:id="@+id/calendarContent"
+        layout="@layout/layout_calendar_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

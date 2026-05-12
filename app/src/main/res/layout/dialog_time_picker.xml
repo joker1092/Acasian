@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_white_card">
+
+    <!-- 타이틀 영역 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/gradient_forest_header"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/tvPickerTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="시작 시간 선택"
+            android:textColor="@color/mist"
+            android:textSize="16sp"
+            android:letterSpacing="0.04"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvPickerPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="06 : 00"
+            android:textColor="@color/white"
+            android:textSize="56sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.04" />
+    </LinearLayout>
+
+    <!-- WheelPicker 영역 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <!-- 시간 열 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.acasian.iot.Calendar.view.WheelTimePickerView
+                android:id="@+id/pickerHour"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시  간"
+                android:textSize="15sp"
+                android:textColor="@color/text_secondary"
+                android:letterSpacing="0.12"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+
+        <!-- 구분자 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&#183;"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="@color/moss"
+            android:paddingBottom="40dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp" />
+
+        <!-- 분 열 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.acasian.iot.Calendar.view.WheelTimePickerView
+                android:id="@+id/pickerMinute"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="분"
+                android:textSize="15sp"
+                android:textColor="@color/text_secondary"
+                android:letterSpacing="0.12"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+
+    <!-- 버튼 행 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="16dp">
+
+        <Button
+            android:id="@+id/btnPickerCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:text="취소"
+            android:textSize="18sp"
+            android:textColor="@color/text_hint"
+            android:background="@null"
+            android:paddingStart="24dp"
+            android:paddingEnd="16dp" />
+
+        <Button
+            android:id="@+id/btnPickerConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:text="확인"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/moss"
+            android:background="@null"
+            android:paddingStart="16dp"
+            android:paddingEnd="8dp" />
+    </LinearLayout>
+
+</LinearLayout>
