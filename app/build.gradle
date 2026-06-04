@@ -18,8 +18,8 @@ android {
         applicationId "com.acasian.iot"
         minSdk 29
         targetSdk 35
-        versionCode 101
-        versionName "1.01"
+        versionCode 120
+        versionName "1.2"
     }
 
     buildTypes {

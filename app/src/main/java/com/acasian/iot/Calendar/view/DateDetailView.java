@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 
 import com.acasian.iot.Calendar.model.WorkRecord;
 import com.acasian.iot.DemoData;
@@ -69,12 +70,14 @@ public class DateDetailView {
         void onScheduleDelete(String schId);
     }
 
-    /** 예약 등록 시 서버 API 호출 위임 콜백 */
+    /** 예약 등록 시 서버 API 호출 위임 콜백
+     *  weekFlags: String[7] = {mon,tue,wed,thu,fri,sat,sun}, 각 "Y"/"N"
+     *    - isRepeat=2(주간반복)일 때만 의미. isRepeat=0 또는 1이면 null 가능. */
     public interface OnScheduleAddListener {
         void onScheduleAdd(java.time.LocalDate date, java.time.LocalTime time,
                            String profileId, String telNo, boolean isAuto, boolean isSeq,
                            String nodeIds, int stime, int dtime, int reCount,
-                           int isRepeat);
+                           int isRepeat, String[] weekFlags);
     }
 
     private final View             container;
@@ -633,8 +636,18 @@ public class DateDetailView {
             LocalTime init = LocalTime.now().plusMinutes(5); // 기본값: 현재 시각 +5분
             showTimePicker(ctx, "시작 시간 선택", init.getHour(), init.getMinute(), (h, m) -> {
                 LocalTime picked = LocalTime.of(h, m);
-                // 오늘 날짜라면 현재 시각 이후인지 검증
-                if (currentDate.isEqual(LocalDate.now()) && !picked.isAfter(LocalTime.now())) {
+                // 반복 모드(매주/매일)인지 확인 — 반복이면 과거 시각 가드 건너뜀
+                com.google.android.material.switchmaterial.SwitchMaterial swRepeatChk =
+                        dlgView.findViewById(R.id.switchRepeat);
+                boolean isRepeatMode = (swRepeatChk != null && swRepeatChk.isChecked());
+                // 단건 + 선택 날짜가 "오늘"일 때만 현재 시각 이후인지 검증
+                // (반복은 매주/매일 그 시각에 실행되므로 과거 시각 가드 불필요)
+                // (단건 + 미래 날짜도 가드 불필요)
+                LocalDate targetDate = selectedDate[0] != null ? selectedDate[0] : currentDate;
+                if (!isRepeatMode
+                        && targetDate != null
+                        && targetDate.isEqual(LocalDate.now())
+                        && !picked.isAfter(LocalTime.now())) {
                     android.widget.Toast.makeText(ctx,
                             "현재 시각 이후로 선택해 주세요.", android.widget.Toast.LENGTH_SHORT).show();
                     return;
@@ -846,23 +859,121 @@ public class DateDetailView {
         if (addDialog.getWindow() != null)
             addDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
-        // ── switchRepeat 토글 → 날짜 행 숨김/표시 ────────────────────
+        // ── switchRepeat 토글 → 날짜 행 숨김/표시 + 요일 칩 박스 ────
         com.google.android.material.switchmaterial.SwitchMaterial swRepeatInit =
                 dlgView.findViewById(R.id.switchRepeat);
         android.view.View rowDateRef = dlgView.findViewById(R.id.add_row_date);
+        android.view.View rowWeekdaysRef = dlgView.findViewById(R.id.add_row_weekdays);
         TextView tvRepeatDescRef = dlgView.findViewById(R.id.tvRepeatDesc);
+
+        // 요일 칩 7개 (mon~sun 순) + 선택 상태 보관 배열 ("Y"/"N")
+        TextView[] chips = new TextView[]{
+                dlgView.findViewById(R.id.chip_mon),
+                dlgView.findViewById(R.id.chip_tue),
+                dlgView.findViewById(R.id.chip_wed),
+                dlgView.findViewById(R.id.chip_thu),
+                dlgView.findViewById(R.id.chip_fri),
+                dlgView.findViewById(R.id.chip_sat),
+                dlgView.findViewById(R.id.chip_sun)
+        };
+        final String[] weekFlags = {"Y","Y","Y","Y","Y","Y","Y"}; // 초기: 전체 ON (매일 반복)
+        TextView tvWeekSummary = dlgView.findViewById(R.id.tv_weekday_summary);
+
+        // 칩 시각 갱신 헬퍼
+        Runnable refreshChips = () -> {
+            for (int i = 0; i < 7; i++) {
+                if (chips[i] == null) continue;
+                if ("Y".equals(weekFlags[i])) {
+                    chips[i].setBackgroundResource(R.drawable.bg_btn_zone_start);
+                    chips[i].setTextColor(
+                            androidx.core.content.ContextCompat.getColor(ctx, R.color.white));
+                } else {
+                    chips[i].setBackgroundColor(android.graphics.Color.TRANSPARENT);
+                    chips[i].setTextColor(
+                            androidx.core.content.ContextCompat.getColor(ctx, R.color.mist));
+                }
+            }
+            // 요약 갱신
+            if (tvWeekSummary != null) {
+                int sum = 0;
+                for (String v : weekFlags) if ("Y".equals(v)) sum++;
+                if (sum == 0) {
+                    tvWeekSummary.setText("선택된 요일이 없습니다");
+                    tvWeekSummary.setTextColor(
+                            androidx.core.content.ContextCompat.getColor(ctx, R.color.gold));
+                } else if (sum >= 7) {
+                    tvWeekSummary.setText("매일 반복");
+                    tvWeekSummary.setTextColor(
+                            androidx.core.content.ContextCompat.getColor(ctx, R.color.gold));
+                } else {
+                    StringBuilder sb = new StringBuilder("매주 ");
+                    String[] labels = {"월","화","수","목","금","토","일"};
+                    boolean first = true;
+                    for (int i = 0; i < 7; i++) {
+                        if ("Y".equals(weekFlags[i])) {
+                            if (!first) sb.append("·");
+                            sb.append(labels[i]);
+                            first = false;
+                        }
+                    }
+                    sb.append(" 반복");
+                    tvWeekSummary.setText(sb.toString());
+                    tvWeekSummary.setTextColor(
+                            androidx.core.content.ContextCompat.getColor(ctx, R.color.gold));
+                }
+            }
+        };
+
+        // 칩 클릭 → 토글 ("Y" ↔ "N")
+        for (int i = 0; i < 7; i++) {
+            final int idx = i;
+            if (chips[idx] != null) {
+                chips[idx].setOnClickListener(v -> {
+                    weekFlags[idx] = "Y".equals(weekFlags[idx]) ? "N" : "Y";
+                    refreshChips.run();
+                });
+            }
+        }
+        // 최초 시각 적용
+        refreshChips.run();
+
         if (swRepeatInit != null) {
             swRepeatInit.setOnCheckedChangeListener((btn, checked) -> {
-                // 반복 ON → 날짜 행 숨김, 반복 OFF → 날짜 행 표시
+                // 반복 ON → 날짜 행 숨김 + 요일 칩 박스 표시
+                // 반복 OFF → 날짜 행 표시 + 요일 칩 박스 숨김
                 if (rowDateRef != null)
                     rowDateRef.setVisibility(checked
                             ? android.view.View.GONE : android.view.View.VISIBLE);
+                if (rowWeekdaysRef != null)
+                    rowWeekdaysRef.setVisibility(checked
+                            ? android.view.View.VISIBLE : android.view.View.GONE);
                 if (tvRepeatDescRef != null)
                     tvRepeatDescRef.setText(checked
-                            ? "매일 반복 — 지정 시간마다 실행"
+                            ? "매주 반복 — 선택 요일마다 실행"
                             : "반복 안 함 — 단건 예약");
+                // 세그먼트 토글 시각 갱신 (왼쪽=반복ON, 오른쪽=단건OFF)
+                applyRepeatSegmentStyle(dlgView, checked);
+                // 반복 ON 진입 시 칩 전체 ON으로 리셋
+                if (checked) {
+                    for (int i = 0; i < 7; i++) weekFlags[i] = "Y";
+                    refreshChips.run();
+                }
             });
         }
+
+        // ── 상단 세그먼트 토글 [매주 반복 | 단건] ────────────────────
+        TextView segOn  = dlgView.findViewById(R.id.seg_repeat_on);
+        TextView segOff = dlgView.findViewById(R.id.seg_repeat_off);
+        if (segOn != null) segOn.setOnClickListener(v -> {
+            if (swRepeatInit != null && !swRepeatInit.isChecked()) swRepeatInit.setChecked(true);
+            else applyRepeatSegmentStyle(dlgView, true);
+        });
+        if (segOff != null) segOff.setOnClickListener(v -> {
+            if (swRepeatInit != null && swRepeatInit.isChecked()) swRepeatInit.setChecked(false);
+            else applyRepeatSegmentStyle(dlgView, false);
+        });
+        // 초기 표시 (기본: 단건 OFF)
+        applyRepeatSegmentStyle(dlgView, swRepeatInit != null && swRepeatInit.isChecked());
 
         dlgView.findViewById(R.id.add_btn_cancel).setOnClickListener(v -> {
             pendingSelectedCardContainer = null;
@@ -917,19 +1028,40 @@ public class DateDetailView {
             if (selectedProfile[0] != null)
                 newRecord.setIrrigationProfileId(selectedProfile[0].getId());
 
-            // 반복 설정 읽기
+            // 반복 설정 읽기 + 주간반복 처리 (v1.9)
             com.google.android.material.switchmaterial.SwitchMaterial swRepeat =
                     dlgView.findViewById(R.id.switchRepeat);
-            int isRepeat = (swRepeat != null && swRepeat.isChecked()) ? 1 : 0;
-            // 반복이면 selectedDate 무시 (날짜 없이 서버에 전송)
-            if (isRepeat == 1) selectedDate[0] = null;
+            boolean repeatOn = (swRepeat != null && swRepeat.isChecked());
+            int isRepeat = 0;
+            String[] weekFlagsForSend = null;
+            if (repeatOn) {
+                int sum = 0;
+                for (String wf : weekFlags) if ("Y".equals(wf)) sum++;
+                if (sum == 0) {
+                    // 가드: 0개 선택 시 등록 차단
+                    android.widget.Toast.makeText(ctx,
+                            "선택된 요일이 없습니다. 최소 1개 요일을 선택해 주세요.",
+                            android.widget.Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (sum >= 7) {
+                    // 전체 선택 → 매일 반복 (v1.9: isRepeat=1, mon~sun="N")
+                    isRepeat = 1;
+                    weekFlagsForSend = null;
+                } else {
+                    // 일부 선택 → 주간 반복 (v1.9: isRepeat=2, mon~sun "Y"/"N" 지정)
+                    isRepeat = 2;
+                    weekFlagsForSend = weekFlags.clone();
+                }
+                selectedDate[0] = null; // 반복이면 selectedDate 무시
+            }
 
             // 서버 API 호출 위임
             if (scheduleAddListener != null) {
                 String nodeIds = mode[0] == 2
                         ? String.join(",", dirSelectedDevIds) : null;
                 scheduleAddListener.onScheduleAdd(
-                        isRepeat == 1 ? currentDate : (selectedDate[0] != null ? selectedDate[0] : currentDate),
+                        repeatOn ? currentDate : (selectedDate[0] != null ? selectedDate[0] : currentDate),
                         selectedStart[0],
                         selectedProfile[0] != null ? selectedProfile[0].getId() : null,
                         selectedZoneId[0],
@@ -939,7 +1071,7 @@ public class DateDetailView {
                         selectedRunMin[0],
                         selectedRestMin[0],
                         mode[0] == 2 ? Math.max(1, tryParseInt(etDirRepeat, 1)) : 1,
-                        isRepeat);
+                        isRepeat, weekFlagsForSend);
             }
             records.add(newRecord);
             addDialog.dismiss();
@@ -1384,6 +1516,32 @@ public class DateDetailView {
     private void updatePreview(TextView tv, int hour, int minute) {
         if (tv == null) return;
         tv.setText(String.format(Locale.getDefault(), "%02d : %02d", hour, minute));
+    }
+
+    /**
+     * 상단 [매일 반복 | 단건] 세그먼트 토글의 시각 상태 갱신.
+     * @param checked true = 매일 반복(왼쪽 활성), false = 단건(오른쪽 활성)
+     */
+    private void applyRepeatSegmentStyle(android.view.View dlgView, boolean checked) {
+        TextView segOn  = dlgView.findViewById(R.id.seg_repeat_on);
+        TextView segOff = dlgView.findViewById(R.id.seg_repeat_off);
+        if (segOn == null || segOff == null) return;
+        Context ctx = dlgView.getContext();
+        int colorActive   = ContextCompat.getColor(ctx, R.color.white);
+        int colorInactive = ContextCompat.getColor(ctx, R.color.moss);
+        if (checked) {
+            // 반복 ON: 왼쪽(매일 반복) 활성
+            segOn.setBackgroundResource(R.drawable.bg_btn_zone_start);
+            segOn.setTextColor(colorActive);
+            segOff.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            segOff.setTextColor(colorInactive);
+        } else {
+            // 단건 OFF: 오른쪽(단건) 활성
+            segOn.setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            segOn.setTextColor(colorInactive);
+            segOff.setBackgroundResource(R.drawable.bg_btn_zone_start);
+            segOff.setTextColor(colorActive);
+        }
     }
 
 }

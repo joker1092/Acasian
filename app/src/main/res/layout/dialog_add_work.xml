@@ -16,7 +16,158 @@
         android:text="작업 예약" android:textColor="@color/white"
         android:textSize="20sp" android:textStyle="bold" android:layout_marginBottom="16dp" />
     <View android:layout_width="match_parent" android:layout_height="1dp"
-        android:background="@color/moss" android:layout_marginBottom="16dp" />
+        android:background="@color/moss" android:layout_marginBottom="12dp" />
+
+    <!-- ══ 반복 / 단건 토글 (상단·소형) ══
+         왼쪽=매주 반복(ON), 오른쪽=단건(OFF)
+         호환성: 동일한 SwitchMaterial(@id/switchRepeat)을 invisible 상태로 유지 →
+                 기존 DateDetailView 코드의 isChecked()/setOnCheckedChangeListener 그대로 동작 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="14dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="반복"
+            android:textSize="13sp"
+            android:textColor="@color/mist" />
+
+        <!-- 세그먼트 토글: [매주 반복] [단건] — 36dp 높이 -->
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_irrigation_card">
+            <TextView
+                android:id="@+id/seg_repeat_on"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="매주 반복"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/moss"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true" />
+            <TextView
+                android:id="@+id/seg_repeat_off"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="단건"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true"
+                android:focusable="true" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ══ 요일 선택 박스 (반복 ON일 때만 VISIBLE) ══
+         초기값: 7개 모두 ON (= 매일 반복). 사용자가 빼고 싶은 요일을 OFF로 토글.
+         7개 모두 선택 → isRepeat=1, 일부 선택 → isRepeat=2(주간반복).
+         0개 선택 시: 등록 차단 + "선택된 요일이 없습니다" 표시 -->
+    <LinearLayout
+        android:id="@+id/add_row_weekdays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_irrigation_card"
+        android:padding="12dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="반복할 요일 · 전체 선택 시 매일 반복"
+            android:textColor="@color/mist"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- 요일 칩 7개 — 가로 균등 분할 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+            <TextView android:id="@+id/chip_mon"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:gravity="center" android:text="월"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/chip_tue"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:gravity="center" android:text="화"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/chip_wed"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:gravity="center" android:text="수"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/chip_thu"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:gravity="center" android:text="목"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/chip_fri"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:gravity="center" android:text="금"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/chip_sat"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:gravity="center" android:text="토"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+            <TextView android:id="@+id/chip_sun"
+                android:layout_width="0dp" android:layout_height="32dp" android:layout_weight="1"
+                android:gravity="center" android:text="일"
+                android:textSize="13sp" android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_btn_zone_start"
+                android:clickable="true" android:focusable="true" />
+        </LinearLayout>
+
+        <!-- 선택 요약 (전체=매일반복 / 일부=요일 나열 / 0개=경고) -->
+        <TextView
+            android:id="@+id/tv_weekday_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="매일 반복"
+            android:textColor="@color/gold"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:gravity="end" />
+    </LinearLayout>
 
     <!-- 날짜 (반복 시 GONE, 단건 시 VISIBLE) -->
     <LinearLayout
@@ -340,51 +491,22 @@
     <TextView android:id="@+id/add_adjust_type_name" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
     <TextView android:id="@+id/add_adjust_change" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
 
-    <!-- 반복 설정 체크박스 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:background="@drawable/bg_input_normal"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="매일 반복"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"/>
-            <TextView
-                android:id="@+id/tvRepeatDesc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="반복 안 함 — 단건 예약"
-                android:textSize="12sp"
-                android:textColor="@color/mist"
-                android:layout_marginTop="2dp"/>
-        </LinearLayout>
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/switchRepeat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"
-            app:thumbTint="@color/white"
-            app:trackTint="@color/moss"
-            xmlns:app="http://schemas.android.com/apk/res-auto"/>
-    </LinearLayout>
+    <!-- ══ 호환용 SwitchMaterial — 화면엔 안 보임 ══
+         상단 세그먼트 토글(seg_repeat_on/off)이 이 스위치의 checked를 조작.
+         기존 DateDetailView 코드의 @id/switchRepeat·@id/tvRepeatDesc 참조 유지.
+         ※ 절대 삭제하지 말 것 — checked 상태가 곧 isRepeat 값. -->
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/switchRepeat"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:checked="false"
+        xmlns:app="http://schemas.android.com/apk/res-auto"/>
+    <TextView
+        android:id="@+id/tvRepeatDesc"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
 
     <!-- 버튼 행 -->
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"

@@ -146,7 +146,7 @@ public class ScheduleListActivity extends AppCompatActivity {
                 findViewById(android.R.id.content),
                 AppConfig.getInstance().isDevMode());
         addDialogHelper.setOnScheduleAddListener(
-                (date, time, profileId, telNo, isAuto, isSeq, nodeIds, stime, dtime, reCount, isRepeat) -> {
+                (date, time, profileId, telNo, isAuto, isSeq, nodeIds, stime, dtime, reCount, isRepeat, weekFlags) -> {
                     if (AppConfig.getInstance().isDevMode()) {
                         Toast.makeText(this, "DEV: 예약 등록됨", Toast.LENGTH_SHORT).show();
                         loadSchedules();
@@ -157,7 +157,23 @@ public class ScheduleListActivity extends AppCompatActivity {
                     String hhnn     = com.acasian.iot.network.ApiDateUtil.toHhnn(time);
                     String isSeqStr = isSeq ? "Y" : "N";
                     com.acasian.iot.network.ApiService.ScheduleAddRequest req;
-                    if (isAuto) {
+                    if (isRepeat == 2 && weekFlags != null && weekFlags.length == 7) {
+                        // v1.9 주간반복
+                        if (isAuto) {
+                            req = com.acasian.iot.network.ApiService.ScheduleAddRequest.forAutoWeekly(
+                                    session.getPhoneNumber(), farmId, telNo,
+                                    profileId, yymmdd, hhnn, isSeqStr,
+                                    weekFlags[0], weekFlags[1], weekFlags[2], weekFlags[3],
+                                    weekFlags[4], weekFlags[5], weekFlags[6]);
+                        } else {
+                            req = com.acasian.iot.network.ApiService.ScheduleAddRequest.forIndividualWeekly(
+                                    session.getPhoneNumber(), farmId, telNo,
+                                    yymmdd, hhnn, isSeqStr, nodeIds, stime, dtime, reCount,
+                                    weekFlags[0], weekFlags[1], weekFlags[2], weekFlags[3],
+                                    weekFlags[4], weekFlags[5], weekFlags[6]);
+                        }
+                    } else if (isAuto) {
+                        // 단건 or 매일반복
                         req = com.acasian.iot.network.ApiService.ScheduleAddRequest.forAutoRepeat(
                                 session.getPhoneNumber(), farmId, telNo,
                                 profileId, yymmdd, hhnn, isSeqStr, isRepeat);
@@ -172,9 +188,18 @@ public class ScheduleListActivity extends AppCompatActivity {
                                         retrofit2.Call<com.acasian.iot.network.ApiService.ScheduleAddResponse> c,
                                         retrofit2.Response<com.acasian.iot.network.ApiService.ScheduleAddResponse> r) {
                                     runOnUiThread(() -> {
-                                        Toast.makeText(ScheduleListActivity.this,
-                                                "예약이 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                                        loadSchedules();
+                                        if (r.isSuccessful() && r.body() != null && r.body().isSuccess()) {
+                                            int schId = r.body().schId;
+                                            Toast.makeText(ScheduleListActivity.this,
+                                                    "예약이 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                                            loadSchedules();
+                                            // ★ v4.0: addSchedule 직후 그룹 명령 생성
+                                            if (schId > 0) genCmdAfterSchedule(String.valueOf(schId));
+                                        } else {
+                                            Toast.makeText(ScheduleListActivity.this,
+                                                    "예약 등록 실패 (" + r.code() + ")",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     });
                                 }
                                 @Override public void onFailure(
@@ -185,6 +210,28 @@ public class ScheduleListActivity extends AppCompatActivity {
                                 }
                             });
                 });
+    }
+
+    /** addSchedule 성공 후 genScheduleCateGrpCmd 호출 (v4.0) */
+    private void genCmdAfterSchedule(String schId) {
+        if (schId == null || schId.isEmpty() || schId.startsWith("r_")) return;
+        com.acasian.iot.network.ApiService apiSvc =
+                com.acasian.iot.network.ApiClient.getInstance(this).getService();
+        apiSvc.genScheduleCateGrpCmd(
+                new com.acasian.iot.network.ApiService.SchIdRequest(schId))
+              .enqueue(new retrofit2.Callback<com.acasian.iot.model.response.ApiResponse<Void>>() {
+                  @Override public void onResponse(
+                          retrofit2.Call<com.acasian.iot.model.response.ApiResponse<Void>> call,
+                          retrofit2.Response<com.acasian.iot.model.response.ApiResponse<Void>> res) {
+                      android.util.Log.d("ScheduleList",
+                              "genCmd schId=" + schId + " → " + (res.isSuccessful() ? "OK" : res.code()));
+                  }
+                  @Override public void onFailure(
+                          retrofit2.Call<com.acasian.iot.model.response.ApiResponse<Void>> call,
+                          Throwable t) {
+                      android.util.Log.e("ScheduleList", "genCmd 실패: " + t.getMessage());
+                  }
+              });
     }
 
     private void setupTabs() {
@@ -279,7 +326,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         r1.lteNo    = "컨트롤박스 #1";
         r1.isSched  = "N";
         r1.isRepeat = 1;
-        r1.isDel    = 1;
+        r1.isDel    = 0; // 활성
         r1.kind     = 1;
         r1.groupList = new java.util.ArrayList<>();
         ApiService.ScheduleCateListResponse.GroupItem g1a = new ApiService.ScheduleCateListResponse.GroupItem();
@@ -301,7 +348,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         r2.lteNo    = "컨트롤박스 #1";
         r2.isSched  = "N";
         r2.isRepeat = 1;
-        r2.isDel    = 1;
+        r2.isDel    = 0; // 활성
         r2.kind     = 1;
         r2.groupList = new java.util.ArrayList<>();
         ApiService.ScheduleCateListResponse.GroupItem g2a = new ApiService.ScheduleCateListResponse.GroupItem();
@@ -312,6 +359,26 @@ public class ScheduleListActivity extends AppCompatActivity {
         r2.groupList.add(g2a);
         allItems.add(r2);
 
+        // 반복 예약 3 — 매주 월·수·금 오전 7:00 (v1.9 주간반복)
+        ApiService.ScheduleListResponse.ScheduleItem r3 = new ApiService.ScheduleListResponse.ScheduleItem();
+        r3.schId    = 5;
+        r3.cateName = "월수금 관수";
+        r3.hhnn     = "0700";
+        r3.yymmdd   = "260518";
+        r3.lteNo    = "컨트롤박스 #2";
+        r3.isSched  = "N";
+        r3.isRepeat = 2;     // v1.9: 주간반복
+        r3.isDel    = 0;     // 활성
+        r3.kind     = 1;
+        r3.mon = "Y"; r3.tue = "N"; r3.wed = "Y"; r3.thu = "N";
+        r3.fri = "Y"; r3.sat = "N"; r3.sun = "N";
+        r3.groupList = new java.util.ArrayList<>();
+        ApiService.ScheduleCateListResponse.GroupItem g3 = new ApiService.ScheduleCateListResponse.GroupItem();
+        g3.groupName = "전체";
+        g3.nodeList = java.util.Arrays.asList(makeDemoNode("01"), makeDemoNode("02"));
+        r3.groupList.add(g3);
+        allItems.add(r3);
+
         // 단건 예약 — 예정
         ApiService.ScheduleListResponse.ScheduleItem s1 = new ApiService.ScheduleListResponse.ScheduleItem();
         s1.schId    = 3;
@@ -321,7 +388,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         s1.lteNo    = "컨트롤박스 #2";
         s1.isSched  = "N";
         s1.isRepeat = 0;
-        s1.isDel    = 1;
+        s1.isDel    = 0; // 활성
         allItems.add(s1);
 
         // 단건 예약 — 완료
@@ -333,7 +400,7 @@ public class ScheduleListActivity extends AppCompatActivity {
         s2.lteNo    = "컨트롤박스 #1";
         s2.isSched  = "Y";  // 완료
         s2.isRepeat = 0;
-        s2.isDel    = 0; // 종료
+        s2.isDel    = 1; // 종료(비활성)
         allItems.add(s2);
 
         applyFilter();
@@ -341,9 +408,16 @@ public class ScheduleListActivity extends AppCompatActivity {
 
     private void applyFilter() {
         showItems.clear();
+        LocalDate today = LocalDate.now();
         for (ApiService.ScheduleListResponse.ScheduleItem item : allItems) {
+            // 어제 이전 단건은 자동 숨김 (반복 예약은 영향 없음)
+            // 단건: isRepeat == 0
+            if (item.isRepeat == 0) {
+                LocalDate d = ApiDateUtil.fromYymmdd(item.yymmdd);
+                if (d != null && d.isBefore(today)) continue;
+            }
             if (currentTab == TAB_ALL)    { showItems.add(item); }
-            else if (currentTab == TAB_REPEAT && item.isRepeat == 1) { showItems.add(item); }
+            else if (currentTab == TAB_REPEAT && (item.isRepeat == 1 || item.isRepeat == 2)) { showItems.add(item); }
             else if (currentTab == TAB_ONCE   && item.isRepeat == 0) { showItems.add(item); }
         }
         adapter.notifyDataSetChanged();
@@ -500,8 +574,20 @@ public class ScheduleListActivity extends AppCompatActivity {
                 // ── 메인함 ────────────────────────────────
                 tvCardZone.setText(item.lteNo != null ? item.lteNo : "");
 
-                // ── 반복 / 단건 분기 ───────────────────────
-                boolean isRepeat = (item.isRepeat == 1);
+                // ── 반복 / 단건 분기 (v1.9: isRepeat 1=매일, 2=주간) ──
+                boolean isRepeat = (item.isRepeat == 1 || item.isRepeat == 2);
+
+                // 🔍 디버그: 서버에서 받은 isDel/isRepeat/요일 확인
+                int weekYCount = 0;
+                for (String wf : new String[]{item.mon,item.tue,item.wed,item.thu,item.fri,item.sat,item.sun}) {
+                    if ("Y".equalsIgnoreCase(wf)) weekYCount++;
+                }
+                android.util.Log.d("ScheduleList",
+                        "schId=" + item.schId + " cateName=" + item.cateName
+                                + " isRepeat=" + item.isRepeat + " isDel=" + item.isDel
+                                + " week(Y)=" + weekYCount
+                                + " → 토글표시=" + isRepeat
+                                + ", 토글ON=" + item.isActive());
 
                 tvRepeatIcon .setVisibility(isRepeat ? View.VISIBLE : View.GONE);
                 tvValveGroup .setVisibility(isRepeat ? View.VISIBLE : View.GONE);
@@ -512,7 +598,7 @@ public class ScheduleListActivity extends AppCompatActivity {
 
                 if (isRepeat) {
                     // 반복: 밸브 그룹 텍스트 표시
-                    boolean active = item.isActive(); // isDel==1
+                    boolean active = item.isActive(); // isDel==0
                     int activeColor = getColor(R.color.moss);
                     int dimColor    = getColor(R.color.inactive_gray);
 
@@ -534,8 +620,8 @@ public class ScheduleListActivity extends AppCompatActivity {
                     switchActive.setChecked(active);
                     switchActive.setOnCheckedChangeListener((btn, checked) -> {
                         // stopSchedule API 호출
-                        // checked=true → isDel=1(진행중), checked=false → isDel=0(종료)
-                        int newIsDel = checked ? 1 : 0;
+                        // checked=true(ON) → isDel=0(활성/진행중), checked=false(OFF) → isDel=1(비활성/종료)
+                        int newIsDel = checked ? 0 : 1;
                         tvCardTime.setTextColor(checked
                                 ? getColor(R.color.text_primary)
                                 : getColor(R.color.inactive_gray));
@@ -606,8 +692,10 @@ public class ScheduleListActivity extends AppCompatActivity {
             }
 
             private void applyStatusBadge(ApiService.ScheduleListResponse.ScheduleItem item) {
-                if (item.isRepeat == 1) {
-                    tvCardStatus.setText("매일 반복");
+                if (item.isRepeat == 1 || item.isRepeat == 2) {
+                    // v1.9: 매일반복(1)이면 "매일 반복", 주간반복(2)이면 "매주 월·수·금 반복" 등
+                    String summary = item.repeatSummary();
+                    tvCardStatus.setText(summary != null ? summary : "반복");
                     tvCardStatus.setBackgroundResource(R.drawable.bg_badge_ok);
                     tvCardStatus.setTextColor(getColor(R.color.forest_dark));
                     return;
@@ -638,14 +726,15 @@ public class ScheduleListActivity extends AppCompatActivity {
 
             /** 예약 상세 팝업 — 수정/삭제 */
             private void showDetailPopup(ApiService.ScheduleListResponse.ScheduleItem item) {
-                String[] options = item.isRepeat == 1
+                boolean isRepeatCard = (item.isRepeat == 1 || item.isRepeat == 2);
+                String[] options = isRepeatCard
                         ? new String[]{"수정", "삭제"}
                         : new String[]{"삭제"};
 
                 new AlertDialog.Builder(ScheduleListActivity.this)
                         .setTitle(item.cateName != null ? item.cateName : "예약 상세")
                         .setItems(options, (d, w) -> {
-                            if (item.isRepeat == 1) {
+                            if (isRepeatCard) {
                                 if (w == 0) openAddDialog(item);
                                 else        confirmDelete(item);
                             } else {

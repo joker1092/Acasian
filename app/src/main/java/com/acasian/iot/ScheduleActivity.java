@@ -150,10 +150,10 @@ public class ScheduleActivity extends AppCompatActivity {
         boolean demoMode = AppConfig.getInstance().isDevMode();
         dateDetailView = new DateDetailView(detailView, demoMode);
 
-        // ── 예약 등록 콜백 → addSchedule API 호출 ───────────────────
+        // ── 예약 등록 콜백 → addSchedule API 호출 (v1.9 주간반복 지원) ─
         dateDetailView.setOnScheduleAddListener((date, time, profileId, telNo,
                                                   isAuto, isSeqMode, nodeIds,
-                                                  stime, dtime, reCount, isRepeat) -> {
+                                                  stime, dtime, reCount, isRepeat, weekFlags) -> {
             if (demoMode) return; // DEV_MODE: 로컬만 (DateDetailView 내부에서 처리)
 
             com.acasian.iot.storage.SessionManager session =
@@ -167,7 +167,24 @@ public class ScheduleActivity extends AppCompatActivity {
             String isSeqStr = isSeqMode ? "Y" : "N";
 
             com.acasian.iot.network.ApiService.ScheduleAddRequest req;
-            if (isAuto) {
+            if (isRepeat == 2 && weekFlags != null && weekFlags.length == 7) {
+                // v1.9 주간반복 — 요일 지정 ("Y"/"N")
+                if (isAuto) {
+                    req = com.acasian.iot.network.ApiService.ScheduleAddRequest.forAutoWeekly(
+                            session.getPhoneNumber(), farmId, telNo,
+                            profileId, yymmdd, hhnn, isSeqStr,
+                            weekFlags[0], weekFlags[1], weekFlags[2], weekFlags[3],
+                            weekFlags[4], weekFlags[5], weekFlags[6]);
+                } else {
+                    req = com.acasian.iot.network.ApiService.ScheduleAddRequest.forIndividualWeekly(
+                            session.getPhoneNumber(), farmId, telNo,
+                            yymmdd, hhnn, isSeqStr,
+                            nodeIds, stime, dtime, reCount,
+                            weekFlags[0], weekFlags[1], weekFlags[2], weekFlags[3],
+                            weekFlags[4], weekFlags[5], weekFlags[6]);
+                }
+            } else if (isAuto) {
+                // isRepeat=0(단건) or 1(매일반복)
                 req = com.acasian.iot.network.ApiService.ScheduleAddRequest.forAutoRepeat(
                         session.getPhoneNumber(), farmId, telNo,
                         profileId, yymmdd, hhnn, isSeqStr, isRepeat);

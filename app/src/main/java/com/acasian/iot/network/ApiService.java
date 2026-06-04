@@ -170,7 +170,7 @@ public interface ApiService {
     Call<ApiResponse<Void>> delSchedule(@Body ScheduleDelRequest request);
 
     /** POST 스케줄 정지/재개 — /aca/v1/setting/stopSchedule
-     *  isDel: 0=스케줄종료(정지), 1=진행중(재개) */
+     *  isDel: 0=활성(진행중/재개), 1=비활성(종료/정지) */
     @POST("v1/setting/stopSchedule")
     Call<ApiResponse<Void>> stopSchedule(@Body StopScheduleRequest request);
 
@@ -647,18 +647,60 @@ public interface ApiService {
             @com.google.gson.annotations.SerializedName("dtime")    public int dtime;
             /** 반복횟수 */
             @com.google.gson.annotations.SerializedName("reCount")  public int reCount;
-            /** 반복 여부: 0=반복없음(단건), 1=반복(매일 지정시간 실행) */
+            /** 반복 여부: 0=반복없음(단건), 1=매일반복, 2=주간반복(요일지정) [v1.9] */
             @com.google.gson.annotations.SerializedName("isRepeat") public int isRepeat;
-            /** 스케줄 진행여부: 0=스케줄종료, 1=진행중 */
+            /** 예약 활성 여부: 0=활성(진행중), 1=비활성(종료) — 필드명이 isDel이지만 0/1 의미 주의 */
             @com.google.gson.annotations.SerializedName("isDel")    public int isDel;
+            // ── 주간반복 요일 플래그 (v1.9) — "Y"/"N" 문자열. isRepeat=2일 때만 의미. isRepeat=1이면 모두 "N" ──
+            @com.google.gson.annotations.SerializedName("mon") public String mon;
+            @com.google.gson.annotations.SerializedName("tue") public String tue;
+            @com.google.gson.annotations.SerializedName("wed") public String wed;
+            @com.google.gson.annotations.SerializedName("thu") public String thu;
+            @com.google.gson.annotations.SerializedName("fri") public String fri;
+            @com.google.gson.annotations.SerializedName("sat") public String sat;
+            @com.google.gson.annotations.SerializedName("sun") public String sun;
             /** 유형의 그룹 목록 (getScheduleCate groupList 동일 구조) */
             @com.google.gson.annotations.SerializedName("groupList")
             public java.util.List<ScheduleCateListResponse.GroupItem> groupList;
             public boolean isAuto()       { return kind == 1; }
             public boolean isSequential() { return "Y".equalsIgnoreCase(isSeq); }
-            public boolean isRepeat()     { return isRepeat == 1; }
-            /** 진행 중 여부: isDel=1이면 true */
-            public boolean isActive()     { return isDel == 1; }
+            public boolean isRepeat()     { return isRepeat == 1 || isRepeat == 2; }
+            /** 매일 반복 (v1.9 isRepeat=1) */
+            public boolean isDaily()      { return isRepeat == 1; }
+            /** 주간 반복 (v1.9 isRepeat=2) */
+            public boolean isWeekly()     { return isRepeat == 2; }
+            /** 진행 중 여부: isDel=0이면 활성(true) */
+            public boolean isActive()     { return isDel == 0; }
+
+            /**
+             * 카드에 표시할 반복 요약 문자열.
+             * - 매일반복(isRepeat=1): "매일 반복"
+             * - 주간반복(isRepeat=2): "매주 월·수·금 반복" (선택 요일이 7개면 "매일 반복" 폴백)
+             * - 단건(isRepeat=0): null
+             */
+            public String repeatSummary() {
+                if (isRepeat == 1) return "매일 반복";
+                if (isRepeat == 2) {
+                    String[] labels = {"월","화","수","목","금","토","일"};
+                    String[] vals   = {mon, tue, wed, thu, fri, sat, sun};
+                    int sum = 0;
+                    for (String v : vals) if ("Y".equalsIgnoreCase(v)) sum++;
+                    if (sum >= 7) return "매일 반복";
+                    if (sum == 0) return "요일 미선택";
+                    StringBuilder sb = new StringBuilder("매주 ");
+                    boolean first = true;
+                    for (int i = 0; i < 7; i++) {
+                        if ("Y".equalsIgnoreCase(vals[i])) {
+                            if (!first) sb.append("·");
+                            sb.append(labels[i]);
+                            first = false;
+                        }
+                    }
+                    sb.append(" 반복");
+                    return sb.toString();
+                }
+                return null;
+            }
         }
     }
 
@@ -700,25 +742,46 @@ public interface ApiService {
         @com.google.gson.annotations.SerializedName("dtime")     public final int dtime;
         /** 개별관수 시 반복횟수 */
         @com.google.gson.annotations.SerializedName("reCount")   public final int reCount;
-        /** 반복 여부: 0=반복없음(단건), 1=반복(매일 지정시간 실행) */
+        /** 반복 여부: 0=반복없음(단건), 1=매일반복, 2=주간반복(요일지정) [v1.9] */
         @com.google.gson.annotations.SerializedName("isRepeat")  public final int isRepeat;
         /** 스케줄 진행여부: 0=종료, 1=진행중 — 신규 등록 시 항상 1(진행중) 고정 */
         @com.google.gson.annotations.SerializedName("isDel")     public final int isDel;
+        // ── 주간반복 요일 플래그 (v1.9) — "Y"/"N" 문자열. isRepeat=2일 때만 의미. isRepeat=1이면 모두 "N" ──
+        @com.google.gson.annotations.SerializedName("mon") public final String mon;
+        @com.google.gson.annotations.SerializedName("tue") public final String tue;
+        @com.google.gson.annotations.SerializedName("wed") public final String wed;
+        @com.google.gson.annotations.SerializedName("thu") public final String thu;
+        @com.google.gson.annotations.SerializedName("fri") public final String fri;
+        @com.google.gson.annotations.SerializedName("sat") public final String sat;
+        @com.google.gson.annotations.SerializedName("sun") public final String sun;
 
         /** 자동관수 생성자 — 단건 */
         public static ScheduleAddRequest forAuto(String userId, String farmId, String lteNo,
                                                   String cateId, String yymmdd, String hhnn,
                                                   String isSeq) {
             return new ScheduleAddRequest(userId, farmId, lteNo, cateId, yymmdd, hhnn,
-                    1, "N", isSeq, null, 0, 0, 1, 0);
+                    1, "N", isSeq, null, 0, 0, 1, 0,
+                    "N", "N", "N", "N", "N", "N", "N");
         }
 
-        /** 자동관수 생성자 — 반복 포함 */
+        /** 자동관수 생성자 — 매일반복 (v1.9: isRepeat=1, mon~sun="N") */
         public static ScheduleAddRequest forAutoRepeat(String userId, String farmId, String lteNo,
                                                         String cateId, String yymmdd, String hhnn,
                                                         String isSeq, int isRepeat) {
             return new ScheduleAddRequest(userId, farmId, lteNo, cateId, yymmdd, hhnn,
-                    1, "N", isSeq, null, 0, 0, 1, isRepeat);
+                    1, "N", isSeq, null, 0, 0, 1, isRepeat,
+                    "N", "N", "N", "N", "N", "N", "N");
+        }
+
+        /** 자동관수 생성자 — 주간반복 (v1.9: isRepeat=2, mon~sun "Y"/"N" 지정) */
+        public static ScheduleAddRequest forAutoWeekly(String userId, String farmId, String lteNo,
+                                                        String cateId, String yymmdd, String hhnn,
+                                                        String isSeq,
+                                                        String mon, String tue, String wed, String thu,
+                                                        String fri, String sat, String sun) {
+            return new ScheduleAddRequest(userId, farmId, lteNo, cateId, yymmdd, hhnn,
+                    1, "N", isSeq, null, 0, 0, 1, 2,
+                    mon, tue, wed, thu, fri, sat, sun);
         }
 
         /** 개별관수 생성자 — 단건 */
@@ -727,10 +790,11 @@ public interface ApiService {
                                                         String isSeq, String nodeIds,
                                                         int stime, int dtime, int reCount) {
             return new ScheduleAddRequest(userId, farmId, lteNo, null, yymmdd, hhnn,
-                    2, "Y", isSeq, nodeIds, stime, dtime, reCount, 0);
+                    2, "Y", isSeq, nodeIds, stime, dtime, reCount, 0,
+                    "N", "N", "N", "N", "N", "N", "N");
         }
 
-        /** 개별관수 생성자 — 반복 포함 */
+        /** 개별관수 생성자 — 매일반복 (v1.9: isRepeat=1, mon~sun="N") */
         public static ScheduleAddRequest forIndividualRepeat(String userId, String farmId,
                                                               String lteNo,
                                                               String yymmdd, String hhnn,
@@ -738,26 +802,46 @@ public interface ApiService {
                                                               int stime, int dtime, int reCount,
                                                               int isRepeat) {
             return new ScheduleAddRequest(userId, farmId, lteNo, null, yymmdd, hhnn,
-                    2, "Y", isSeq, nodeIds, stime, dtime, reCount, isRepeat);
+                    2, "Y", isSeq, nodeIds, stime, dtime, reCount, isRepeat,
+                    "N", "N", "N", "N", "N", "N", "N");
+        }
+
+        /** 개별관수 생성자 — 주간반복 (v1.9: isRepeat=2, mon~sun "Y"/"N" 지정) */
+        public static ScheduleAddRequest forIndividualWeekly(String userId, String farmId,
+                                                              String lteNo,
+                                                              String yymmdd, String hhnn,
+                                                              String isSeq, String nodeIds,
+                                                              int stime, int dtime, int reCount,
+                                                              String mon, String tue, String wed, String thu,
+                                                              String fri, String sat, String sun) {
+            return new ScheduleAddRequest(userId, farmId, lteNo, null, yymmdd, hhnn,
+                    2, "Y", isSeq, nodeIds, stime, dtime, reCount, 2,
+                    mon, tue, wed, thu, fri, sat, sun);
         }
 
         /** 하위 호환 — 자동관수 기본 (isSeq=N, isRepeat=0) */
         public ScheduleAddRequest(String userId, String farmId, String lteNo,
                                    String cateId, String yymmdd, String hhnn) {
-            this(userId, farmId, lteNo, cateId, yymmdd, hhnn, 1, "N", "N", null, 0, 0, 1, 0);
+            this(userId, farmId, lteNo, cateId, yymmdd, hhnn,
+                    1, "N", "N", null, 0, 0, 1, 0,
+                    "N", "N", "N", "N", "N", "N", "N");
         }
 
         private ScheduleAddRequest(String userId, String farmId, String lteNo,
                                     String cateId, String yymmdd, String hhnn,
                                     int kind, String isTemp, String isSeq,
                                     String nodeIds, int stime, int dtime, int reCount,
-                                    int isRepeat) {
+                                    int isRepeat,
+                                    String mon, String tue, String wed, String thu,
+                                    String fri, String sat, String sun) {
             this.userId=userId; this.farmId=farmId; this.lteNo=lteNo;
             this.cateId=cateId; this.yymmdd=yymmdd; this.hhnn=hhnn;
             this.kind=kind; this.isTemp=isTemp; this.isSeq=isSeq;
             this.nodeIds=nodeIds; this.stime=stime; this.dtime=dtime; this.reCount=reCount;
             this.isRepeat=isRepeat;
-            this.isDel = 1; // 신규 등록 시 항상 1(진행중) 고정
+            this.isDel = 0; // 신규 등록 시 항상 0(활성/진행중) 고정
+            this.mon=mon; this.tue=tue; this.wed=wed; this.thu=thu;
+            this.fri=fri; this.sat=sat; this.sun=sun;
         }
     }
 
@@ -782,19 +866,19 @@ public interface ApiService {
         @com.google.gson.annotations.SerializedName("reCount")   public final int reCount;
         /** 반복 여부: 0=반복없음(단건), 1=반복(매일 지정시간 실행) */
         @com.google.gson.annotations.SerializedName("isRepeat")  public final int isRepeat;
-        /** 스케줄 진행여부: 0=종료, 1=진행중 */
+        /** 예약 활성 여부: 0=활성(진행중), 1=비활성(종료) */
         @com.google.gson.annotations.SerializedName("isDel")     public final int isDel;
 
-        /** 자동관수 수정 — 단건, isDel=1(진행중) 기본 */
+        /** 자동관수 수정 — 단건, isDel=0(활성) 기본 */
         public ScheduleUpdRequest(String schId, String cateId, String yymmdd, String hhnn,
                                    String isSeq) {
-            this(schId, cateId, yymmdd, hhnn, 1, "N", isSeq, null, 0, 0, 1, 0, 1);
+            this(schId, cateId, yymmdd, hhnn, 1, "N", isSeq, null, 0, 0, 1, 0, 0);
         }
 
-        /** 자동관수 수정 — 반복 포함, isDel=1(진행중) 기본 */
+        /** 자동관수 수정 — 반복 포함, isDel=0(활성) 기본 */
         public ScheduleUpdRequest(String schId, String cateId, String yymmdd, String hhnn,
                                    String isSeq, int isRepeat) {
-            this(schId, cateId, yymmdd, hhnn, 1, "N", isSeq, null, 0, 0, 1, isRepeat, 1);
+            this(schId, cateId, yymmdd, hhnn, 1, "N", isSeq, null, 0, 0, 1, isRepeat, 0);
         }
 
         /** 자동관수 수정 — 반복 + isDel 직접 지정 */
@@ -803,23 +887,23 @@ public interface ApiService {
             this(schId, cateId, yymmdd, hhnn, 1, "N", isSeq, null, 0, 0, 1, isRepeat, isDel);
         }
 
-        /** 개별관수 수정 — 단건, isDel=1(진행중) 기본 */
+        /** 개별관수 수정 — 단건, isDel=0(활성) 기본 */
         public ScheduleUpdRequest(String schId, String yymmdd, String hhnn,
                                    String isSeq, String nodeIds,
                                    int stime, int dtime, int reCount) {
-            this(schId, null, yymmdd, hhnn, 2, "Y", isSeq, nodeIds, stime, dtime, reCount, 0, 1);
+            this(schId, null, yymmdd, hhnn, 2, "Y", isSeq, nodeIds, stime, dtime, reCount, 0, 0);
         }
 
-        /** 개별관수 수정 — 반복 포함, isDel=1(진행중) 기본 */
+        /** 개별관수 수정 — 반복 포함, isDel=0(활성) 기본 */
         public ScheduleUpdRequest(String schId, String yymmdd, String hhnn,
                                    String isSeq, String nodeIds,
                                    int stime, int dtime, int reCount, int isRepeat) {
-            this(schId, null, yymmdd, hhnn, 2, "Y", isSeq, nodeIds, stime, dtime, reCount, isRepeat, 1);
+            this(schId, null, yymmdd, hhnn, 2, "Y", isSeq, nodeIds, stime, dtime, reCount, isRepeat, 0);
         }
 
-        /** 하위 호환 — 자동관수 기본 (isRepeat=0, isDel=1) */
+        /** 하위 호환 — 자동관수 기본 (isRepeat=0, isDel=0/활성) */
         public ScheduleUpdRequest(String schId, String cateId, String yymmdd, String hhnn) {
-            this(schId, cateId, yymmdd, hhnn, 1, "N", "N", null, 0, 0, 1, 0, 1);
+            this(schId, cateId, yymmdd, hhnn, 1, "N", "N", null, 0, 0, 1, 0, 0);
         }
 
         private ScheduleUpdRequest(String schId, String cateId, String yymmdd, String hhnn,
@@ -844,7 +928,7 @@ public interface ApiService {
     }
 
     /** stopSchedule 요청 — { schId, isDel }
-     *  isDel: 0=스케줄종료(정지), 1=진행중(재개) */
+     *  isDel: 0=활성(진행중/재개), 1=비활성(종료/정지) */
     class StopScheduleRequest {
         @com.google.gson.annotations.SerializedName("schId") public final int schId;
         @com.google.gson.annotations.SerializedName("isDel") public final int isDel;
@@ -852,13 +936,13 @@ public interface ApiService {
             this.schId = schId;
             this.isDel = isDel;
         }
-        /** 정지 요청 — isDel=0 */
+        /** 정지 요청 — isDel=1 (비활성) */
         public static StopScheduleRequest stop(int schId) {
-            return new StopScheduleRequest(schId, 0);
-        }
-        /** 재개 요청 — isDel=1 */
-        public static StopScheduleRequest resume(int schId) {
             return new StopScheduleRequest(schId, 1);
+        }
+        /** 재개 요청 — isDel=0 (활성) */
+        public static StopScheduleRequest resume(int schId) {
+            return new StopScheduleRequest(schId, 0);
         }
     }
 
