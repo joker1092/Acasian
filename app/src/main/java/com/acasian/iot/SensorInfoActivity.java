@@ -2,7 +2,10 @@ package com.acasian.iot;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,10 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.acasian.iot.model.response.SensingStatResponse;
+import com.acasian.iot.view.SensorChartView;
+
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -20,8 +27,10 @@ import java.util.Locale;
  *
  *  탭 구성: 센서측정값 / 변화값분석 / 관수주기 / 기기현황
  *
- *  API 연동 준비:
- *    TODO_API 주석 위치에서 실제 API/DB 로드로 교체
+ *  변화값분석 탭 (v1.9):
+ *    - 드롭다운(조회 단위): 1일 / 1주일 / 한달
+ *    - 진입 시 기본 "1일" 자동 로드 → 지습·지온·EC·pH 4개 차트 표시
+ *    - 일/주/월 통계 API (SensorStatManager) 연동
  * ══════════════════════════════════════════════════════════════════
  */
 public class SensorInfoActivity extends AppCompatActivity {
@@ -38,6 +47,9 @@ public class SensorInfoActivity extends AppCompatActivity {
     private View header;
     private TextView[] tabViews = new TextView[4];
     private LinearLayout contentContainer;
+
+    // 변화값분석 — 차트 컨테이너 (드롭다운 아래)
+    private LinearLayout analysisChartContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +102,7 @@ public class SensorInfoActivity extends AppCompatActivity {
     // ── 탭 전환 ─────────────────────────────────────────────────────
     private void selectTab(int tab) {
         currentTab = tab;
+        analysisChartContainer = null; // 탭 재진입 시 stale 참조 방지
 
         // 탭 스타일 적용
         for (int i = 0; i < tabViews.length; i++) {
@@ -167,20 +180,172 @@ public class SensorInfoActivity extends AppCompatActivity {
     }
 
     // ── 변화값 분석 탭 ──────────────────────────────────────────────
+    //   드롭다운(1일/1주일/한달) + 진입 시 1일 자동 로드 → 4개 센서 차트
     private void renderAnalysisTab() {
-        if (AppConfig.getInstance().isDevMode()) {
-            // DEV_MODE: 더미 텍스트 표시
-            // TODO_API: 실제 연동 시 API 호출로 교체
-            View card = buildInfoCard("변화값 분석",
-                    "관수 전후 환경지수 변화를 분석합니다.\n\n"
-                    + "• 지습: +8% (관수 후 평균 증가)\n"
-                    + "• 지온: -2°C (관수 후 평균 감소)\n"
-                    + "• EC: -0.3 dS/m (관수 후 평균 감소)\n"
-                    + "• pH: +0.2 (관수 후 평균 증가)");
-            contentContainer.addView(card);
-        } else {
-            addPlaceholderCard("— 데이터 준비중 —");
+        // 1) 기간 선택 드롭다운
+        View selRow = getLayoutInflater().inflate(
+                R.layout.item_stat_period, contentContainer, false);
+        Spinner spinner = selRow.findViewById(R.id.spinnerStatPeriod);
+
+        String[] labels = {
+                SensorStatManager.Period.DAILY.label,    // 1일
+                SensorStatManager.Period.WEEKLY.label,   // 1주일
+                SensorStatManager.Period.MONTHLY.label   // 한달
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, labels);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        contentContainer.addView(selRow);
+
+        // 2) 차트 컨테이너
+        analysisChartContainer = new LinearLayout(this);
+        analysisChartContainer.setOrientation(LinearLayout.VERTICAL);
+        analysisChartContainer.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        contentContainer.addView(analysisChartContainer);
+
+        // 3) 선택 리스너 — Spinner 는 최초 레이아웃 시 position 0(1일) 콜백을
+        //    1회 보장하므로, 별도 호출 없이 진입 시 자동으로 1일 데이터가 로드됨.
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
+                loadAnalysisStats(SensorStatManager.Period.fromPosition(pos));
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // 4) 주별·월별은 백그라운드로 미리 받아 캐시에 채워둠 → 드롭다운 전환 즉시 반응.
+        //    (캐시는 같은 시(時) 동안 유효하므로 중복 호출 없음)
+        prefetchInBackground(SensorStatManager.Period.WEEKLY);
+        prefetchInBackground(SensorStatManager.Period.MONTHLY);
+    }
+
+    /** 결과를 화면에 그리지 않고 캐시만 데우는 프리페치 */
+    private void prefetchInBackground(SensorStatManager.Period period) {
+        SensorStatManager.fetch(this, period, new SensorStatManager.Callback() {
+            @Override public void onSuccess(List<SensingStatResponse.Point> points) { /* 캐시 적재용 */ }
+            @Override public void onError(String message) { /* 전환 시 재시도 */ }
+        });
+    }
+
+    /** 선택된 기간으로 통계 로드 → 4개 센서 차트 바인딩 */
+    private void loadAnalysisStats(final SensorStatManager.Period period) {
+        final LinearLayout target = analysisChartContainer;
+        if (target == null) return;
+
+        target.removeAllViews();
+        addLoadingText(target, "불러오는 중…");
+
+        SensorStatManager.fetch(this, period, new SensorStatManager.Callback() {
+            @Override
+            public void onSuccess(List<SensingStatResponse.Point> points) {
+                // 탭 이탈/재진입으로 컨테이너가 바뀐 경우 무시
+                if (currentTab != TAB_ANALYSIS || target != analysisChartContainer) return;
+                target.removeAllViews();
+
+                if (points == null || points.isEmpty()) {
+                    addLoadingText(target, "— 데이터 없음 —");
+                    return;
+                }
+                // 서버 응답은 단일 센서의 min/max 시계열 1종.
+                // 관리범위(lo/hi)는 센서 종류 확정 후 환경기준값으로 지정 (현재 미지정 → 밴드/이상값 없음).
+                // TODO_API: 센서 종류 확정 시 title·단위·관리범위(lo,hi) 지정
+                bindSeriesChart(target, "측정값 (min·max)", "",
+                        Double.NaN, Double.NaN, points, period);
+            }
+
+            @Override
+            public void onError(String message) {
+                if (currentTab != TAB_ANALYSIS || target != analysisChartContainer) return;
+                target.removeAllViews();
+                addLoadingText(target, message != null ? message : "— 데이터 준비중 —");
+            }
+        });
+    }
+
+    /**
+     * 차트 카드 1개 생성·바인딩 (단일 min/max 시계열).
+     * 서버가 avg 미제공 → 라인은 (min+max)/2, 밴드는 min~max.
+     * 미측정(0/0) 버킷은 제외.
+     * @param lo,hi 관리범위 (모르면 Double.NaN — 밴드/이상값 마커 미표시)
+     */
+    private void bindSeriesChart(LinearLayout parent, String title, String unit,
+                                 double lo, double hi,
+                                 List<SensingStatResponse.Point> points,
+                                 SensorStatManager.Period period) {
+        View card = getLayoutInflater().inflate(R.layout.item_sensor_chart, parent, false);
+        TextView tvTitle  = card.findViewById(R.id.tvChartTitle);
+        TextView tvPeriod = card.findViewById(R.id.tvChartPeriod);
+        TextView tvRange  = card.findViewById(R.id.tvChartRange);
+        TextView tvMinMax = card.findViewById(R.id.tvChartMinMax);
+        SensorChartView chart = card.findViewById(R.id.chartView);
+
+        if (tvTitle  != null) tvTitle.setText(title);
+        if (tvPeriod != null) tvPeriod.setText(periodText(period) + " · 탭하면 값");
+        if (tvRange  != null) {
+            tvRange.setText((Double.isNaN(lo) || Double.isNaN(hi))
+                    ? "관리범위: —"
+                    : String.format(Locale.getDefault(),
+                        "관리범위: %s~%s%s", fmtNum(lo), fmtNum(hi), unitSuffix(unit)));
         }
+
+        int n = points.size();
+        float[] avg = new float[n], mn = new float[n], mx = new float[n];
+        String[] lbl = new String[n];
+        double gMin = Double.MAX_VALUE, gMax = -Double.MAX_VALUE;
+        int k = 0;
+        for (SensingStatResponse.Point p : points) {
+            if (p == null || !p.hasData) continue;   // 미측정(0/0) 제외
+            avg[k] = (float) p.mid();
+            mn[k]  = (float) p.min;
+            mx[k]  = (float) p.max;
+            lbl[k] = p.label;
+            gMin = Math.min(gMin, p.min);
+            gMax = Math.max(gMax, p.max);
+            k++;
+        }
+        if (k < n) {
+            avg = java.util.Arrays.copyOf(avg, k);
+            mn  = java.util.Arrays.copyOf(mn, k);
+            mx  = java.util.Arrays.copyOf(mx, k);
+            lbl = java.util.Arrays.copyOf(lbl, k);
+        }
+        if (chart != null) chart.setData(avg, mn, mx, lbl, lo, hi);
+        if (tvMinMax != null) {
+            tvMinMax.setText(k == 0 ? "측정값 없음" : String.format(Locale.getDefault(),
+                    "최고 %.1f / 최저 %.1f", gMax, gMin));
+        }
+        parent.addView(card);
+    }
+
+    private String periodText(SensorStatManager.Period period) {
+        switch (period) {
+            case WEEKLY:  return "요일별 (월~일)";
+            case MONTHLY: return "최근 12개월 (월별)";
+            case DAILY:
+            default:      return "최근 30일 (일별)";
+        }
+    }
+
+    private static String fmtNum(double v) {
+        if (v == Math.floor(v)) return String.valueOf((int) v);
+        return String.format(Locale.getDefault(), "%.1f", v);
+    }
+
+    private static String unitSuffix(String unit) {
+        if (unit == null || unit.isEmpty()) return "";
+        return "%".equals(unit) ? "%" : " " + unit;
+    }
+
+    private void addLoadingText(LinearLayout parent, String msg) {
+        TextView tv = new TextView(this);
+        tv.setText(msg);
+        tv.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
+        tv.setGravity(android.view.Gravity.CENTER);
+        tv.setPadding(32, 48, 32, 48);
+        parent.addView(tv);
     }
 
     // ── 관수주기 탭 ──────────────────────────────────────────────────
