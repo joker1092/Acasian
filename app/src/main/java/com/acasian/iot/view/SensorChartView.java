@@ -36,6 +36,8 @@ public class SensorChartView extends View {
     private int selected = -1;   // 탭한 포인트 인덱스
 
     private final Paint pBand = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pOver = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint pLimit = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pEnv  = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pLine = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint pDot  = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -62,6 +64,12 @@ public class SensorChartView extends View {
 
         pBand.setStyle(Paint.Style.FILL);
         pBand.setColor(Color.parseColor("#1A66BB6A"));      // 관리범위 sage 10%
+
+        pOver.setStyle(Paint.Style.FILL);
+        pOver.setColor(Color.parseColor("#14F44336"));      // 한계 초과 구간 연빨강 8%
+        pLimit.setStyle(Paint.Style.STROKE);
+        pLimit.setStrokeWidth(1.5f * d);
+        pLimit.setColor(Color.parseColor("#80F44336"));     // 한계선
 
         pEnv.setStyle(Paint.Style.FILL);
         pEnv.setColor(Color.parseColor("#332E7D32"));       // min~max 변동폭 20%
@@ -118,7 +126,9 @@ public class SensorChartView extends View {
     private float xAt(int i){ int n = avg.length;
                               return (n > 1) ? left() + stepX() * i : (left() + right()) / 2f; }
 
-    // Y 스케일
+    // Y 스케일 — 실측 데이터(min~max)에만 맞추고 ±10% 여백.
+    //   관리범위(상·하한)는 축에 강제로 포함하지 않는다 → 데이터가 한계에서 멀면
+    //   변동이 시원하게 펼쳐지고, 한계선은 화면 범위에 들어올 때만 그려진다.
     private float yMin, yMax;
     private void computeY() {
         float dMin = Float.MAX_VALUE, dMax = -Float.MAX_VALUE;
@@ -126,12 +136,10 @@ public class SensorChartView extends View {
             dMin = Math.min(dMin, safe(min, i, avg[i]));
             dMax = Math.max(dMax, safe(max, i, avg[i]));
         }
-        if (!Double.isNaN(rangeLo)) dMin = (float) Math.min(dMin, rangeLo);
-        if (!Double.isNaN(rangeHi)) dMax = (float) Math.max(dMax, rangeHi);
         if (dMax - dMin < 1e-3) { dMax += 1; dMin -= 1; }
         float span = dMax - dMin;
-        yMin = dMin - span * 0.12f;
-        yMax = dMax + span * 0.12f;
+        yMin = dMin - span * 0.10f;
+        yMax = dMax + span * 0.10f;
     }
     private float yToPx(float v) {
         float t = (v - yMin) / (yMax - yMin);
@@ -163,9 +171,18 @@ public class SensorChartView extends View {
         }
         pAxisText.setTextAlign(Paint.Align.LEFT);
 
-        // ── 관리범위 밴드 ──
-        if (!Double.isNaN(rangeLo) && !Double.isNaN(rangeHi)) {
-            canvas.drawRect(left(), yToPx((float) rangeHi), right(), yToPx((float) rangeLo), pBand);
+        // ── 관리범위 표시 — 화면(Y범위) 안에 들어오는 한계만 선+음영 ──
+        //   상한: 선 위쪽을 초과 음영 / 하한: 선 아래쪽을 미만 음영.
+        //   한계가 데이터 범위 밖이면(=화면에 없으면) 그리지 않음.
+        if (!Double.isNaN(rangeHi) && rangeHi >= yMin && rangeHi <= yMax) {
+            float y = yToPx((float) rangeHi);
+            canvas.drawRect(left(), top(), right(), y, pOver);   // 상한 초과 구간
+            canvas.drawLine(left(), y, right(), y, pLimit);
+        }
+        if (!Double.isNaN(rangeLo) && rangeLo >= yMin && rangeLo <= yMax) {
+            float y = yToPx((float) rangeLo);
+            canvas.drawRect(left(), y, right(), bottom(), pOver); // 하한 미만 구간
+            canvas.drawLine(left(), y, right(), y, pLimit);
         }
 
         // ── min~max 변동폭 음영 ──
@@ -266,8 +283,9 @@ public class SensorChartView extends View {
     }
 
     private boolean isOutOfRange(int i) {
-        if (Double.isNaN(rangeLo) || Double.isNaN(rangeHi)) return false;
-        return safe(max, i, avg[i]) > rangeHi || safe(min, i, avg[i]) < rangeLo;
+        boolean over  = !Double.isNaN(rangeHi) && safe(max, i, avg[i]) > rangeHi; // 상한 초과
+        boolean under = !Double.isNaN(rangeLo) && safe(min, i, avg[i]) < rangeLo; // 하한 미만
+        return over || under;
     }
 
     private static float safe(float[] arr, int i, float fb) {

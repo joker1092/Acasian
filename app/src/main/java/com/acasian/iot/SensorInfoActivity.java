@@ -216,79 +216,82 @@ public class SensorInfoActivity extends AppCompatActivity {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // 4) 주별·월별은 백그라운드로 미리 받아 캐시에 채워둠 → 드롭다운 전환 즉시 반응.
-        //    (캐시는 같은 시(時) 동안 유효하므로 중복 호출 없음)
-        prefetchInBackground(SensorStatManager.Period.WEEKLY);
-        prefetchInBackground(SensorStatManager.Period.MONTHLY);
+        // 4) 보이는 일별 외 주별·월별 × 센서4종을 백그라운드 프리페치 → 전환 즉시 반응.
+        //    (캐시는 같은 시(時) 동안 유효 → 시간당 조합별 최대 1회 호출)
+        for (SensorStatManager.SensorType st : SensorStatManager.SensorType.values()) {
+            prefetchInBackground(SensorStatManager.Period.WEEKLY, st);
+            prefetchInBackground(SensorStatManager.Period.MONTHLY, st);
+        }
     }
 
-    /** 결과를 화면에 그리지 않고 캐시만 데우는 프리페치 */
-    private void prefetchInBackground(SensorStatManager.Period period) {
-        SensorStatManager.fetch(this, period, new SensorStatManager.Callback() {
-            @Override public void onSuccess(List<SensingStatResponse.Point> points) { /* 캐시 적재용 */ }
+    /** 결과를 그리지 않고 캐시만 데우는 프리페치 (기간×센서) */
+    private void prefetchInBackground(SensorStatManager.Period period,
+                                      SensorStatManager.SensorType sensor) {
+        SensorStatManager.fetch(this, period, sensor, new SensorStatManager.Callback() {
+            @Override public void onSuccess(List<SensingStatResponse.Point> points) { /* 캐시 적재 */ }
             @Override public void onError(String message) { /* 전환 시 재시도 */ }
         });
     }
 
-    /** 선택된 기간으로 통계 로드 → 4개 센서 차트 바인딩 */
+    /** 선택된 기간으로 센서 4종(지온·지습·EC·pH) 차트를 각각 로드 */
     private void loadAnalysisStats(final SensorStatManager.Period period) {
         final LinearLayout target = analysisChartContainer;
         if (target == null) return;
-
         target.removeAllViews();
-        addLoadingText(target, "불러오는 중…");
 
-        SensorStatManager.fetch(this, period, new SensorStatManager.Callback() {
-            @Override
-            public void onSuccess(List<SensingStatResponse.Point> points) {
-                // 탭 이탈/재진입으로 컨테이너가 바뀐 경우 무시
-                if (currentTab != TAB_ANALYSIS || target != analysisChartContainer) return;
-                target.removeAllViews();
-
-                if (points == null || points.isEmpty()) {
-                    addLoadingText(target, "— 데이터 없음 —");
-                    return;
+        for (final SensorStatManager.SensorType sensor : SensorStatManager.SensorType.values()) {
+            final View card = createSensorCard(target, sensor, period);
+            SensorStatManager.fetch(this, period, sensor, new SensorStatManager.Callback() {
+                @Override
+                public void onSuccess(List<SensingStatResponse.Point> points) {
+                    if (currentTab != TAB_ANALYSIS || target != analysisChartContainer) return;
+                    fillSensorCard(card, sensor, points);
                 }
-                // 서버 응답은 단일 센서의 min/max 시계열 1종.
-                // 관리범위(lo/hi)는 센서 종류 확정 후 환경기준값으로 지정 (현재 미지정 → 밴드/이상값 없음).
-                // TODO_API: 센서 종류 확정 시 title·단위·관리범위(lo,hi) 지정
-                bindSeriesChart(target, "측정값 (min·max)", "",
-                        Double.NaN, Double.NaN, points, period);
-            }
-
-            @Override
-            public void onError(String message) {
-                if (currentTab != TAB_ANALYSIS || target != analysisChartContainer) return;
-                target.removeAllViews();
-                addLoadingText(target, message != null ? message : "— 데이터 준비중 —");
-            }
-        });
+                @Override
+                public void onError(String message) {
+                    if (currentTab != TAB_ANALYSIS || target != analysisChartContainer) return;
+                    TextView tvMinMax = card.findViewById(R.id.tvChartMinMax);
+                    if (tvMinMax != null) tvMinMax.setText(message != null ? message : "준비중");
+                }
+            });
+        }
     }
 
-    /**
-     * 차트 카드 1개 생성·바인딩 (단일 min/max 시계열).
-     * 서버가 avg 미제공 → 라인은 (min+max)/2, 밴드는 min~max.
-     * 미측정(0/0) 버킷은 제외.
-     * @param lo,hi 관리범위 (모르면 Double.NaN — 밴드/이상값 마커 미표시)
-     */
-    private void bindSeriesChart(LinearLayout parent, String title, String unit,
-                                 double lo, double hi,
-                                 List<SensingStatResponse.Point> points,
-                                 SensorStatManager.Period period) {
+    /** 센서 차트 카드 생성(로딩 상태)하여 parent 에 추가하고 반환 */
+    private View createSensorCard(LinearLayout parent, SensorStatManager.SensorType sensor,
+                                  SensorStatManager.Period period) {
         View card = getLayoutInflater().inflate(R.layout.item_sensor_chart, parent, false);
         TextView tvTitle  = card.findViewById(R.id.tvChartTitle);
         TextView tvPeriod = card.findViewById(R.id.tvChartPeriod);
         TextView tvRange  = card.findViewById(R.id.tvChartRange);
         TextView tvMinMax = card.findViewById(R.id.tvChartMinMax);
-        SensorChartView chart = card.findViewById(R.id.chartView);
 
-        if (tvTitle  != null) tvTitle.setText(title);
+        if (tvTitle  != null) tvTitle.setText(sensor.title);
         if (tvPeriod != null) tvPeriod.setText(periodText(period) + " · 탭하면 값");
-        if (tvRange  != null) {
-            tvRange.setText((Double.isNaN(lo) || Double.isNaN(hi))
-                    ? "관리범위: —"
-                    : String.format(Locale.getDefault(),
-                        "관리범위: %s~%s%s", fmtNum(lo), fmtNum(hi), unitSuffix(unit)));
+        if (tvRange  != null) tvRange.setText(rangeText(
+                SensorStatManager.envLo(this, sensor),
+                SensorStatManager.envHi(this, sensor), sensor.unit));
+        if (tvMinMax != null) tvMinMax.setText("불러오는 중…");
+        parent.addView(card);
+        return card;
+    }
+
+    /**
+     * 카드에 데이터 채우기. 서버가 avg 미제공 → 라인 (min+max)/2, 밴드 min~max,
+     * 관리범위(sensor.lo/hi) 음영 + 이상값(범위 이탈) 빨간 마커. 미측정(0/0) 제외.
+     */
+    private void fillSensorCard(View card, SensorStatManager.SensorType sensor,
+                                List<SensingStatResponse.Point> points) {
+        TextView tvMinMax = card.findViewById(R.id.tvChartMinMax);
+        SensorChartView chart = card.findViewById(R.id.chartView);
+        double lo = SensorStatManager.envLo(this, sensor);   // 환경기준(prefs) 동적 조회
+        double hi = SensorStatManager.envHi(this, sensor);
+
+        if (points == null || points.isEmpty()) {
+            if (chart != null) chart.setData(new float[0], new float[0], new float[0],
+                    new String[0], lo, hi);
+            if (tvMinMax != null) tvMinMax.setText("데이터 없음");
+            return;
         }
 
         int n = points.size();
@@ -317,7 +320,19 @@ public class SensorInfoActivity extends AppCompatActivity {
             tvMinMax.setText(k == 0 ? "측정값 없음" : String.format(Locale.getDefault(),
                     "최고 %.1f / 최저 %.1f", gMax, gMin));
         }
-        parent.addView(card);
+    }
+
+    /** 관리범위 표시 — 상한만 / 하한만 / 양쪽 / 없음 */
+    private String rangeText(double lo, double hi, String unit) {
+        boolean hasLo = !Double.isNaN(lo), hasHi = !Double.isNaN(hi);
+        String u = unitSuffix(unit);
+        if (hasLo && hasHi) return String.format(Locale.getDefault(),
+                "관리범위: %s~%s%s", fmtNum(lo), fmtNum(hi), u);
+        if (hasHi) return String.format(Locale.getDefault(),
+                "관리범위: %s%s 이하", fmtNum(hi), u);
+        if (hasLo) return String.format(Locale.getDefault(),
+                "관리범위: %s%s 이상", fmtNum(lo), u);
+        return "관리범위: —";
     }
 
     private String periodText(SensorStatManager.Period period) {
@@ -337,15 +352,6 @@ public class SensorInfoActivity extends AppCompatActivity {
     private static String unitSuffix(String unit) {
         if (unit == null || unit.isEmpty()) return "";
         return "%".equals(unit) ? "%" : " " + unit;
-    }
-
-    private void addLoadingText(LinearLayout parent, String msg) {
-        TextView tv = new TextView(this);
-        tv.setText(msg);
-        tv.setTextColor(ContextCompat.getColor(this, R.color.text_secondary));
-        tv.setGravity(android.view.Gravity.CENTER);
-        tv.setPadding(32, 48, 32, 48);
-        parent.addView(tv);
     }
 
     // ── 관수주기 탭 ──────────────────────────────────────────────────
